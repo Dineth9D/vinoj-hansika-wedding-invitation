@@ -245,7 +245,6 @@ export default function Invitation({ guestName, guestSlug, guest }: Props) {
                   </span>
                 </p>
                 <Divider />
-                <h2 className="wc-title">Kindly reply</h2>
                 <RsvpForm guestName={guestName} guestSlug={guestSlug} guest={guest} />
                 <hr className="wc-rule" />
                 <p className="wc-call">Rather call? Reach us on</p>

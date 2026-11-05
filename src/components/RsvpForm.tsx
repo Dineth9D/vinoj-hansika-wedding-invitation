@@ -77,6 +77,8 @@ export default function RsvpForm({ guestName, guestSlug, guest }: Props) {
   }
 
   return (
+    <>
+    <h2 className="wc-title">Kindly reply</h2>
     <form className="rsvp" onSubmit={submit} noValidate>
       <label className="field">
         <span>Your name</span>
@@ -156,5 +158,6 @@ export default function RsvpForm({ guestName, guestSlug, guest }: Props) {
         {state === "sending" ? "Sending…" : "Send my reply"}
       </button>
     </form>
+    </>
   );
 }
