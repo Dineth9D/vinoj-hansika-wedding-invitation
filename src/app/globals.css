@@ -25,6 +25,8 @@
   --radius-md: 12px;
   --radius-pill: 999px;
   --section: clamp(64px, 10vw, 112px);
+  /* light speckles, like handmade paper */
+  --paper-texture: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 14 -8.6'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
 *,
@@ -597,7 +599,7 @@ textarea {
 .date-section {
   /* soft paper with light speckles */
   background-color: #f4f1eb;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 14 -8.6'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-image: var(--paper-texture);
   text-align: center;
 }
 .big-date {
@@ -808,17 +810,137 @@ textarea {
 /* Footer */
 .footer {
   text-align: center;
-  padding: var(--section) var(--space-4) calc(var(--section) + 40px);
+  padding: var(--section) var(--space-4) 32px;
+}
+.footer-thanks {
+  font-style: italic;
+  font-size: clamp(19px, 3vw, 23px);
+  color: var(--muted);
+  margin: 0 0 var(--space-2);
 }
 .footer-names {
   font-family: var(--font-script);
-  font-size: clamp(44px, 9vw, 64px);
+  font-size: clamp(48px, 10vw, 72px);
   line-height: 1.2;
-  margin: 0 0 4px;
+  margin: 0;
 }
-.footer-note {
+.footer-date {
+  letter-spacing: 0.3em;
+  color: var(--gold-deep);
+  margin: var(--space-2) 0 0;
+}
+.credit {
+  margin: clamp(56px, 10vw, 96px) 0 0;
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--line);
+  font-family: var(--font-sans);
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+  /* keep clear of the round music button on phones */
+  padding-bottom: 56px;
+}
+.credit a {
+  color: var(--gold-deep);
+  text-decoration: none;
+  border-bottom: 1px solid currentColor;
+}
+@media (min-width: 720px) {
+  .credit {
+    padding-bottom: 0;
+  }
+}
+
+/* RSVP wedding card */
+.paper-section {
+  background-color: #efebe3;
+  background-image: var(--paper-texture);
+}
+.wedding-card {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: clamp(6px, 1.2vw, 9px);
+  background-color: #faf9f6;
+  background-image: var(--paper-texture);
+  border: 1px solid #e7e1d6;
+  box-shadow: 0 28px 50px -30px rgba(47, 42, 34, 0.35), 0 2px 6px rgba(47, 42, 34, 0.05);
+}
+.wedding-card-inner {
+  border: 1px solid #e3cfac;
+  padding: clamp(36px, 7vw, 64px) clamp(18px, 6vw, 64px) clamp(32px, 6vw, 48px);
+  text-align: center;
+}
+.wc-dear {
+  font-family: var(--font-script);
+  font-size: clamp(46px, 10vw, 66px);
+  line-height: 1.2;
+  margin: 0 0 var(--space-4);
+}
+.wc-text {
+  max-width: 30em;
+  margin: 0 auto var(--space-4);
+  font-size: clamp(18px, 2.6vw, 20px);
+  line-height: 1.65;
+  color: var(--muted);
+}
+.wc-blessing {
   font-style: italic;
-  margin: var(--space-4) 0 0;
+  font-size: 17px;
+  color: #4e463b;
+  margin: 0 0 var(--space-6);
+}
+.wc-blessing svg {
+  display: inline-block;
+  vertical-align: -2px;
+  margin-left: 4px;
+}
+.nowrap {
+  white-space: nowrap;
+}
+.wedding-card .divider {
+  margin: var(--space-6) auto var(--space-10);
+}
+.wc-title {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: clamp(36px, 7vw, 46px);
+  line-height: 1.1;
+  margin: 0;
+}
+.wedding-card .field input,
+.wedding-card .field textarea,
+.wedding-card .choice button,
+.wedding-card .stepper {
+  background: #fffefb;
+}
+.wc-rule {
+  border: 0;
+  border-top: 1px solid #ddd8cf;
+  margin: clamp(32px, 6vw, 48px) 0 var(--space-6);
+}
+.wc-call {
+  font-style: italic;
+  color: var(--muted);
+  margin: 0 0 var(--space-4);
+}
+.call-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 46px;
+  padding: 0 22px;
+  border: 1px solid #e3cfac;
+  color: var(--ink);
+  font-size: 19px;
+  text-decoration: none;
+  transition: background 0.2s, border-color 0.2s;
+}
+.call-btn svg {
+  color: var(--gold);
+}
+.call-btn:hover {
+  background: #fffefb;
+  border-color: var(--gold);
 }
 
 /* Music button */

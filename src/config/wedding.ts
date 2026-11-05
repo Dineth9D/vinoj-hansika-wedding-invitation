@@ -25,6 +25,10 @@ export const wedding = {
       mapUrl: "https://maps.app.goo.gl/4gND1qqd9NUKUDix8",
     },
   ],
+  // Shown at the end of the RSVP card ("Rather call? Reach us on").
+  contact: { phone: "077 822 2835", tel: "+94778222835", name: "Vinoj" },
+  // Credit at the very bottom of the page. Set url to "" to show plain text.
+  credit: { name: "Dineth", url: "https://github.com/Dineth9D" },
   // Largest party size a guest can enter when they are not on the guest list.
   openLinkMaxSeats: 6,
 } as const;

@@ -51,7 +51,7 @@ export default function RsvpForm({ guestName, guestSlug, guest }: Props) {
   if (state === "done") {
     const first = name.trim() || "friend";
     return (
-      <div className="card rsvp-done" role="status">
+      <div className="rsvp-done" role="status">
         {result.attending ? (
           <>
             <p className="script-title">Thank you, {first}!</p>
@@ -77,7 +77,7 @@ export default function RsvpForm({ guestName, guestSlug, guest }: Props) {
   }
 
   return (
-    <form className="card rsvp" onSubmit={submit} noValidate>
+    <form className="rsvp" onSubmit={submit} noValidate>
       <label className="field">
         <span>Your name</span>
         <input

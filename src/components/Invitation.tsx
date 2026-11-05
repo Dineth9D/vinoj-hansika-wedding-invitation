@@ -6,7 +6,7 @@ import "lenis/dist/lenis.css";
 import { coupleNames, monogram, wedding } from "@/config/wedding";
 import Countdown from "./Countdown";
 import RsvpForm from "./RsvpForm";
-import { ChurchIcon, Divider, GlassesIcon, PinIcon } from "./Ornaments";
+import { ChurchIcon, Divider, GlassesIcon, HeartIcon, PhoneIcon, PinIcon } from "./Ornaments";
 
 export type GuestInfo = {
   name: string;
@@ -182,10 +182,9 @@ export default function Invitation({ guestName, guestSlug, guest }: Props) {
               <img src="/images/couple-2.jpg" alt={`${wedding.partner1.first} and ${wedding.partner2.first}`} loading="lazy" />
             </figure>
             <div className="welcome-text reveal">
-              <p className="script-title">Dear {greetingName},</p>
+              <p className="script-title">Together with our families,</p>
               <p className="lead">
-                Together with our families, we joyfully invite you to celebrate our wedding and share in the
-                happiness of our special day.
+                we joyfully invite you to celebrate our wedding and share in the happiness of our special day.
               </p>
               <Divider />
               <p className="couple-full">
@@ -231,19 +230,48 @@ export default function Invitation({ guestName, guestSlug, guest }: Props) {
         </section>
 
         {/* RSVP */}
-        <section id="rsvp" className="section band">
-          <div className="container narrow reveal">
-            <p className="eyebrow">RSVP</p>
-            <h2 className="title">Will you join us?</h2>
-            <p className="muted center">Please let us know if you can come.</p>
-            <RsvpForm guestName={guestName} guestSlug={guestSlug} guest={guest} />
+        <section id="rsvp" className="section paper-section">
+          <div className="container reveal">
+            <div className="wedding-card">
+              <div className="wedding-card-inner">
+                <p className="wc-dear">Dear {greetingName},</p>
+                <p className="wc-text">
+                  Two hearts and a new chapter, as we celebrate the beginning of our journey together.
+                </p>
+                <p className="wc-blessing">
+                  Your presence and blessings would mean the{" "}
+                  <span className="nowrap">
+                    world to us. <HeartIcon />
+                  </span>
+                </p>
+                <Divider />
+                <h2 className="wc-title">Kindly reply</h2>
+                <RsvpForm guestName={guestName} guestSlug={guestSlug} guest={guest} />
+                <hr className="wc-rule" />
+                <p className="wc-call">Rather call? Reach us on</p>
+                <a className="call-btn" href={`tel:${wedding.contact.tel}`}>
+                  <PhoneIcon />
+                  {wedding.contact.phone} - {wedding.contact.name}
+                </a>
+              </div>
+            </div>
           </div>
         </section>
 
         <footer className="footer">
+          <p className="footer-thanks">Thank you for being a part of our special day</p>
           <p className="footer-names">{coupleNames}</p>
-          <p className="muted">{wedding.dateShort}</p>
-          <p className="footer-note">We can&apos;t wait to celebrate with you.</p>
+          <p className="footer-date">{wedding.dateShort}</p>
+          <p className="credit">
+            Designed &amp; built by{" "}
+            {wedding.credit.url ? (
+              <a href={wedding.credit.url} target="_blank" rel="noopener noreferrer">
+                {wedding.credit.name}
+              </a>
+            ) : (
+              wedding.credit.name
+            )}
+          </p>
         </footer>
       </main>
 
