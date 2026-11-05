@@ -22,7 +22,7 @@ The link `https://your-site.vercel.app/` (with no name) also works. People who u
 All names, dates, times and map links are in `src/config/wedding.ts`.
 
 - Photos: `public/images/couple-1.jpg` (big photo at the top) and `public/images/couple-2.jpg` (arched photo).
-- Music: `public/audio/music.mp3`. It is a soft piano version of Pachelbel's Canon, made for this site. Replace the file with your own song if you like (keep the same name, and use an MP3 under about 5 MB).
+- Music: `public/audio/music.mp3` (the couple's chosen song). It loops and starts softly when the guest taps "Open invitation". To change it, replace the file and keep the same name (an MP3 under about 5 MB).
 
 ## Deploy on Vercel
 
