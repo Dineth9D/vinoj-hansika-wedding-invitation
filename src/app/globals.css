@@ -34,8 +34,8 @@
 }
 
 html {
-  scroll-behavior: smooth;
   -webkit-text-size-adjust: 100%;
+  overflow-x: clip;
 }
 
 body {
@@ -46,7 +46,8 @@ body {
   font-size: 18px;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
-  overflow-x: hidden;
+  /* clip (not hidden) so the page stays the only scroll area: keeps phone scrolling smooth */
+  overflow-x: clip;
   /* Cormorant's default numbers are old-style; use normal ones. */
   font-variant-numeric: lining-nums;
 }
@@ -416,6 +417,14 @@ textarea {
   inset: 0;
   background: url("/images/couple-1.jpg") 40% 30% / cover no-repeat;
   animation: slow-zoom 18s ease-out both;
+  will-change: transform;
+}
+@media (max-aspect-ratio: 1/1) {
+  /* smaller, pre-cropped photo for phones and tall screens */
+  .hero-photo {
+    background-image: url("/images/couple-1-mobile.jpg");
+    background-position: 50% 30%;
+  }
 }
 .hero-shade {
   position: absolute;
@@ -501,6 +510,11 @@ textarea {
   background: rgba(243, 223, 184, 0.85);
   animation: fall linear infinite;
   pointer-events: none;
+  will-change: transform, opacity;
+}
+.hero.is-offscreen .petals span,
+.hero.is-offscreen .scroll-hint span {
+  animation-play-state: paused;
 }
 .petals span:nth-child(3n) {
   background: rgba(214, 140, 110, 0.7);

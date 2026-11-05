@@ -9,7 +9,7 @@ const siteUrl = process.env.VERCEL_PROJECT_PRODUCTION_URL
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: `${coupleNames} | Wedding Invitation`,
-  description: `You are invited to the wedding of ${wedding.groom.full} & ${wedding.bride.full} on ${wedding.dateText}.`,
+  description: `You are invited to the wedding of ${wedding.partner1.full} & ${wedding.partner2.full} on ${wedding.dateText}.`,
   openGraph: {
     title: `${coupleNames} | Wedding Invitation`,
     description: `Join us on ${wedding.dateText}.`,

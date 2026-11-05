@@ -9,6 +9,7 @@
     "lint": "tsc --noEmit"
   },
   "dependencies": {
+    "lenis": "1.3.27",
     "next": "15.5.29",
     "postgres": "3.4.9",
     "react": "19.2.0",

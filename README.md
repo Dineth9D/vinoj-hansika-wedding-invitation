@@ -1,4 +1,4 @@
-# Vinoj & Chathuni – Wedding Invitation
+# Hansika & Vinoj – Wedding Invitation
 
 An online wedding invitation with RSVP and a private guest list.
 It works on phones, tablets, laptops and desktops.

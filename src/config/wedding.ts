@@ -1,8 +1,9 @@
 // All the wedding details live here. Change them in one place.
 
 export const wedding = {
-  groom: { first: "Vinoj", full: "Vinoj Dilshan" },
-  bride: { first: "Chathuni", full: "Chathuni Rajapaksha" },
+  // Names are shown in this order everywhere.
+  partner1: { first: "Hansika", full: "Hansika Fernando" },
+  partner2: { first: "Vinoj", full: "Vinoj Dilshan" },
   // Wedding day, Sri Lanka time (+05:30). The countdown counts to the Mass.
   dateISO: "2026-12-11T15:00:00+05:30",
   dateText: "Friday, December 11th, 2026",
@@ -27,5 +28,5 @@ export const wedding = {
   openLinkMaxSeats: 6,
 } as const;
 
-export const coupleNames = `${wedding.groom.first} & ${wedding.bride.first}`;
-export const monogram = [wedding.groom.first[0], wedding.bride.first[0]] as const;
+export const coupleNames = `${wedding.partner1.first} & ${wedding.partner2.first}`;
+export const monogram = [wedding.partner1.first[0], wedding.partner2.first[0]] as const;

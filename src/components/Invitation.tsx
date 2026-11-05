@@ -1,6 +1,8 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import Lenis from "lenis";
+import "lenis/dist/lenis.css";
 import { coupleNames, monogram, wedding } from "@/config/wedding";
 import Countdown from "./Countdown";
 import RsvpForm from "./RsvpForm";
@@ -78,6 +80,25 @@ export default function Invitation({ guestName, guestSlug, guest }: Props) {
     if (stage === "open") window.scrollTo(0, 0);
   }, [stage]);
 
+  // Smooth, eased scrolling for mouse wheels and trackpads.
+  // Phones keep their own native momentum scrolling, which is already smooth.
+  useEffect(() => {
+    if (stage !== "open") return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const lenis = new Lenis({ autoRaf: true, lerp: 0.085, wheelMultiplier: 0.9, anchors: true });
+    return () => lenis.destroy();
+  }, [stage]);
+
+  // Pause the falling petals when the photo is off screen, to save work while scrolling.
+  useEffect(() => {
+    if (stage === "closed") return;
+    const hero = document.querySelector(".hero");
+    if (!hero) return;
+    const io = new IntersectionObserver(([e]) => hero.classList.toggle("is-offscreen", !e.isIntersecting));
+    io.observe(hero);
+    return () => io.disconnect();
+  }, [stage]);
+
   // Reveal sections as they scroll into view.
   useEffect(() => {
     if (stage === "closed") return;
@@ -114,9 +135,9 @@ export default function Invitation({ guestName, guestSlug, guest }: Props) {
               <p className="cover-dear">Dear {greetingName},</p>
               <p className="cover-sub">you are invited to the wedding of</p>
               <h1 className="cover-names">
-                <span>{wedding.groom.first}</span>
+                <span>{wedding.partner1.first}</span>
                 <span className="amp">&amp;</span>
-                <span>{wedding.bride.first}</span>
+                <span>{wedding.partner2.first}</span>
               </h1>
               <Divider />
               <p className="cover-date">{wedding.dateText.replace(/^\w+, /, "")}</p>
@@ -144,7 +165,7 @@ export default function Invitation({ guestName, guestSlug, guest }: Props) {
           <div className="hero-text">
             <p className="eyebrow light">We are getting married</p>
             <h2 className="hero-names">
-              {wedding.groom.first} <span className="amp">&amp;</span> {wedding.bride.first}
+              {wedding.partner1.first} <span className="amp">&amp;</span> {wedding.partner2.first}
             </h2>
             <p className="hero-date">{wedding.dateShort}</p>
           </div>
@@ -158,7 +179,7 @@ export default function Invitation({ guestName, guestSlug, guest }: Props) {
           <div className="welcome-grid">
             <figure className="arch-photo reveal">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/images/couple-2.jpg" alt={`${wedding.groom.first} and ${wedding.bride.first}`} loading="lazy" />
+              <img src="/images/couple-2.jpg" alt={`${wedding.partner1.first} and ${wedding.partner2.first}`} loading="lazy" />
             </figure>
             <div className="welcome-text reveal">
               <p className="script-title">Dear {greetingName},</p>
@@ -168,9 +189,9 @@ export default function Invitation({ guestName, guestSlug, guest }: Props) {
               </p>
               <Divider />
               <p className="couple-full">
-                {wedding.groom.full}
+                {wedding.partner1.full}
                 <span className="amp-line">&amp;</span>
-                {wedding.bride.full}
+                {wedding.partner2.full}
               </p>
             </div>
           </div>
