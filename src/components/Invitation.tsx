@@ -140,7 +140,7 @@ export default function Invitation({ guestName, guestSlug, guest }: Props) {
                 <span>{wedding.partner2.first}</span>
               </h1>
               <Divider />
-              <p className="cover-date">{wedding.dateText.replace(/^\w+, /, "")}</p>
+              <p className="cover-date">{wedding.dateLong}</p>
               <p className="cover-venue">
                 {wedding.events.map((e) => `${e.place}, ${e.area}`).join("  ·  ")}
               </p>
@@ -198,12 +198,11 @@ export default function Invitation({ guestName, guestSlug, guest }: Props) {
         </section>
 
         {/* Countdown */}
-        <section className="section band">
-          <div className="container narrow reveal">
-            <p className="eyebrow">Save the date</p>
-            <h2 className="title">Counting down to our day</h2>
+        <section className="section date-section" aria-label="Wedding date">
+          <div className="container reveal">
+            <h2 className="big-date">{wedding.dateLong}</h2>
+            <Divider />
             <Countdown target={wedding.dateISO} />
-            <p className="muted center">{wedding.dateText}</p>
           </div>
         </section>
 

@@ -593,43 +593,62 @@ textarea {
   }
 }
 
-/* Countdown */
+/* Date + countdown */
+.date-section {
+  /* soft paper with light speckles */
+  background-color: #f4f1eb;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 14 -8.6'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  text-align: center;
+}
+.big-date {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: clamp(44px, 9vw, 92px);
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  margin: 0;
+  /* normal figures: old-style ones make "11" look like "ıı" */
+  font-variant-numeric: lining-nums;
+}
+.date-section .divider {
+  margin: clamp(20px, 4vw, 36px) auto clamp(28px, 6vw, 56px);
+}
 .countdown {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: clamp(8px, 2vw, 16px);
-  margin: 0 auto var(--space-6);
-  max-width: 560px;
+  display: flex;
+  justify-content: center;
+  margin: 0 auto;
 }
 .cd-box {
-  background: var(--paper);
-  border: 1px solid var(--line);
-  border-radius: var(--radius-md);
-  padding: clamp(12px, 3vw, 20px) 4px;
   display: flex;
   flex-direction: column;
   align-items: center;
+  min-width: clamp(68px, 15vw, 168px);
+  padding: 4px clamp(8px, 2vw, 24px) 8px;
+}
+.cd-box + .cd-box {
+  border-left: 1px solid #e2d3b8;
 }
 .cd-num {
-  font-size: clamp(30px, 8vw, 48px);
-  font-weight: 600;
-  line-height: 1;
-  color: var(--gold-deep);
+  font-family: var(--font-serif);
+  font-size: clamp(40px, 9vw, 60px);
+  font-weight: 400;
+  line-height: 1.1;
+  color: var(--ink);
   font-variant-numeric: lining-nums tabular-nums;
 }
 .cd-label {
-  margin-top: 6px;
-  font-family: var(--font-sans);
-  font-size: clamp(10px, 2.6vw, 12px);
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
+  margin-top: 4px;
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: clamp(14px, 3.4vw, 17px);
   color: var(--muted);
 }
 .countdown-done {
   font-family: var(--font-script);
   font-size: 40px;
   text-align: center;
-  margin: 0 0 var(--space-4);
+  margin: 0;
 }
 
 /* Events */

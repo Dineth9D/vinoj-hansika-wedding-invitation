@@ -36,10 +36,10 @@ export default function Countdown({ target }: { target: string }) {
   }
 
   const items: [string, number | undefined][] = [
-    ["Days", parts?.days],
-    ["Hours", parts?.hours],
-    ["Minutes", parts?.minutes],
-    ["Seconds", parts?.seconds],
+    ["days", parts?.days],
+    ["hours", parts?.hours],
+    ["minutes", parts?.minutes],
+    ["seconds", parts?.seconds],
   ];
 
   return (
