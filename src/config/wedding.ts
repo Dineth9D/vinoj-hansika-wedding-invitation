@@ -28,7 +28,7 @@ export const wedding = {
   // Shown at the end of the RSVP card ("Rather call? Reach us on").
   contact: { phone: "077 822 2835", tel: "+94778222835", name: "Vinoj" },
   // Credit at the very bottom of the page. Set url to "" to show plain text.
-  credit: { name: "Dineth", url: "https://github.com/Dineth9D" },
+  credit: { name: "Dineth", url: "https://www.linkedin.com/in/dineth9d/" },
   // Largest party size a guest can enter when they are not on the guest list.
   openLinkMaxSeats: 6,
 } as const;
