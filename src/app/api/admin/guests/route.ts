@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { isAdmin } from "@/lib/auth";
-import { db, uniqueSlug, type Guest } from "@/lib/db";
-import { cleanText, slugify } from "@/lib/text";
+import { db, newGuestSlug, type Guest } from "@/lib/db";
+import { cleanText } from "@/lib/text";
 
 export const dynamic = "force-dynamic";
 
@@ -27,7 +27,7 @@ export async function POST(req: Request) {
     if (!name) continue;
     const seats = Math.min(Math.max(Math.round(Number(g.seats) || 1), 1), 50);
     const phone = cleanText(g.phone, 30) || null;
-    const slug = await uniqueSlug(slugify(name));
+    const slug = await newGuestSlug(name);
     const rows = await sql<Guest[]>`
       INSERT INTO guests (name, slug, seats, phone) VALUES (${name}, ${slug}, ${seats}, ${phone})
       RETURNING *`;

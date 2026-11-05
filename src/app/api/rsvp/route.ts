@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { db, findGuestBySlug, hasDatabase, uniqueSlug, type Guest } from "@/lib/db";
+import { db, findGuestBySlug, findOpenGuestByName, hasDatabase, newGuestSlug, type Guest } from "@/lib/db";
 import { cleanText, slugify } from "@/lib/text";
 import { wedding } from "@/config/wedding";
 
@@ -32,9 +32,11 @@ export async function POST(req: Request) {
   try {
     const sql = await db();
 
-    // 1. The guest's own link (?guest=...), or 2. a guest with the same name.
+    // 1. The guest's own link (?guest=...), or
+    // 2. someone not on the list who already replied with the same name.
+    // A typed name never matches an invited guest, so nobody can reply for them.
     let guest: Guest | null = guestParam ? await findGuestBySlug(guestParam) : null;
-    if (!guest) guest = await findGuestBySlug(slugify(name));
+    if (!guest) guest = await findOpenGuestByName(name);
 
     const maxSeats = guest?.invited ? guest.seats : wedding.openLinkMaxSeats;
     const count = attending
@@ -53,7 +55,7 @@ export async function POST(req: Request) {
           responded_at = now()
         WHERE id = ${guest.id}`;
     } else {
-      const slug = await uniqueSlug(slugify(name));
+      const slug = await newGuestSlug(name);
       await sql`
         INSERT INTO guests (name, slug, seats, phone, status, attending_count, message, invited, responded_at)
         VALUES (${name}, ${slug}, ${Math.max(count, 1)}, ${phone}, ${status}, ${count}, ${message}, FALSE, now())`;

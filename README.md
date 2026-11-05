@@ -11,10 +11,12 @@ It works on phones, tablets, laptops and desktops.
 Every guest on the list gets a link like:
 
 ```
-https://your-site.vercel.app/?guest=dineth
+https://your-site.vercel.app/?guest=pravil-k7m2
 ```
 
-The page then says "Dear Dineth" and saves the reply against Dineth's row.
+The page then says "Dear Pravil" and saves the reply against Pravil's row.
+The short code at the end (`k7m2`) is random, so nobody can guess another guest's link or reply for them.
+Always send the link from the admin page (**Copy link** or **WhatsApp**).
 The link `https://your-site.vercel.app/` (with no name) also works. People who use it type their own name, and they show up as "Not on list" in the admin page.
 
 ## Change the wedding details

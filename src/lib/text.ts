@@ -12,6 +12,8 @@ export function slugify(input: string): string {
 /** Turns a link value like "dineth-perera" or "Dineth" into "Dineth Perera". */
 export function nameFromParam(input: string): string {
   return input
+    // drop a link code such as "-k7m2" (4 characters with a digit)
+    .replace(/[-_]([a-z0-9]{4})$/i, (m, code: string) => (/\d/.test(code) ? "" : m))
     .replace(/[-_+.]+/g, " ")
     .replace(/[^\p{L}\p{N}\s'&]/gu, "")
     .trim()

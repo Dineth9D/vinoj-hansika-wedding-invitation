@@ -772,6 +772,15 @@ textarea {
   border-color: var(--olive-deep);
   color: #fff;
 }
+.choice button:not(.on):hover {
+  border-color: var(--gold);
+}
+@media (max-width: 440px) {
+  /* one answer per row on phones, so each fits on one line */
+  .choice {
+    grid-template-columns: 1fr;
+  }
+}
 .stepper {
   display: inline-flex;
   align-items: center;
@@ -909,7 +918,7 @@ textarea {
 }
 .wedding-card .field input,
 .wedding-card .field textarea,
-.wedding-card .choice button,
+.wedding-card .choice button:not(.on),
 .wedding-card .stepper {
   background: #fffefb;
 }
