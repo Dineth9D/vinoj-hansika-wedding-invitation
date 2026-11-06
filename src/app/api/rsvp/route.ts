@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { db, findGuestBySlug, findOpenGuestByName, hasDatabase, newGuestSlug, type Guest } from "@/lib/db";
 import { cleanText, slugify } from "@/lib/text";
-import { wedding } from "@/config/wedding";
+import { isAttend, wedding } from "@/config/wedding";
 
 export const dynamic = "force-dynamic";
 
@@ -28,6 +28,8 @@ export async function POST(req: Request) {
 
   if (!name) return bad("Please enter your name.");
   if (typeof body.attending !== "boolean") return bad("Please tell us if you can come.");
+  if (attending && !isAttend(body.events)) return bad("Please choose which part of the day you will attend.");
+  const events = attending && isAttend(body.events) ? body.events : null;
 
   try {
     const sql = await db();
@@ -49,6 +51,7 @@ export async function POST(req: Request) {
         UPDATE guests SET
           status = ${status},
           attending_count = ${count},
+          events = ${events},
           phone = COALESCE(${phone}, phone),
           message = ${message},
           seats = ${guest.invited ? guest.seats : Math.max(count, 1)},
@@ -57,11 +60,11 @@ export async function POST(req: Request) {
     } else {
       const slug = await newGuestSlug(name);
       await sql`
-        INSERT INTO guests (name, slug, seats, phone, status, attending_count, message, invited, responded_at)
-        VALUES (${name}, ${slug}, ${Math.max(count, 1)}, ${phone}, ${status}, ${count}, ${message}, FALSE, now())`;
+        INSERT INTO guests (name, slug, seats, phone, status, attending_count, events, message, invited, responded_at)
+        VALUES (${name}, ${slug}, ${Math.max(count, 1)}, ${phone}, ${status}, ${count}, ${events}, ${message}, FALSE, now())`;
     }
 
-    return NextResponse.json({ ok: true, status, count });
+    return NextResponse.json({ ok: true, status, count, events });
   } catch (err) {
     console.error("RSVP failed", err);
     return bad("Sorry, something went wrong. Please try again.", 500);

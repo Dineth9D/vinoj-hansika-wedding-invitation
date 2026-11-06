@@ -22,6 +22,7 @@ export default async function Page({ searchParams }: Props) {
           seats: g.invited ? g.seats : null,
           status: g.status,
           attendingCount: g.attending_count,
+          events: g.events,
         };
       }
     } catch (err) {

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { isAdmin } from "@/lib/auth";
 import { db, type Guest } from "@/lib/db";
 import { cleanText } from "@/lib/text";
+import { isAttend } from "@/config/wedding";
 
 export const dynamic = "force-dynamic";
 
@@ -26,10 +27,13 @@ export async function PATCH(req: Request, { params }: Ctx) {
   if (status !== "attending") count = 0;
   else if (count < 1) count = 1;
   if (cur.invited) count = Math.min(count, seats);
+  let events = body.events !== undefined ? (isAttend(body.events) ? body.events : null) : cur.events;
+  if (status !== "attending") events = null;
+  else if (!events) events = "both";
 
   const [guest] = await sql<Guest[]>`
     UPDATE guests SET name = ${name}, seats = ${seats}, phone = ${phone}, status = ${status},
-      attending_count = ${count},
+      attending_count = ${count}, events = ${events},
       responded_at = ${status === "pending" ? null : cur.responded_at ?? new Date().toISOString()}
     WHERE id = ${id} RETURNING *`;
   return NextResponse.json({ ok: true, guest });

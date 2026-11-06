@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import Lenis from "lenis";
 import "lenis/dist/lenis.css";
-import { coupleNames, monogram, wedding } from "@/config/wedding";
+import { coupleNames, monogram, wedding, type Attend } from "@/config/wedding";
 import Countdown from "./Countdown";
 import RsvpForm from "./RsvpForm";
 import { ChurchIcon, Divider, GlassesIcon, HeartIcon, PhoneIcon, PinIcon } from "./Ornaments";
@@ -14,6 +14,7 @@ export type GuestInfo = {
   seats: number | null; // null = not on the guest list
   status: "pending" | "attending" | "declined";
   attendingCount: number;
+  events: Attend | null;
 };
 
 type Props = { guestName: string; guestSlug: string; guest: GuestInfo | null };

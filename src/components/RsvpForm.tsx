@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { wedding } from "@/config/wedding";
+import { attendOptions, attendPhrase, wedding, type Attend } from "@/config/wedding";
 import type { GuestInfo } from "./Invitation";
 
 type Props = { guestName: string; guestSlug: string; guest: GuestInfo | null };
@@ -17,13 +17,15 @@ export default function RsvpForm({ guestName, guestSlug, guest }: Props) {
   const [count, setCount] = useState(
     alreadyReplied && guest.attendingCount > 0 ? guest.attendingCount : Math.min(guest?.seats ?? 1, maxSeats),
   );
+  const [events, setEvents] = useState<Attend | null>(alreadyReplied ? guest.events : null);
   const [phone, setPhone] = useState("");
   const [message, setMessage] = useState("");
   const [state, setState] = useState<"form" | "sending" | "done">(alreadyReplied ? "done" : "form");
   const [error, setError] = useState("");
-  const [result, setResult] = useState<{ attending: boolean; count: number }>({
+  const [result, setResult] = useState<{ attending: boolean; count: number; events: Attend | null }>({
     attending: guest?.status === "attending",
     count: guest?.attendingCount ?? 0,
+    events: guest?.events ?? null,
   });
 
   async function submit(e: React.FormEvent) {
@@ -31,16 +33,17 @@ export default function RsvpForm({ guestName, guestSlug, guest }: Props) {
     setError("");
     if (!name.trim()) return setError("Please enter your name.");
     if (attending === null) return setError("Please choose if you can come.");
+    if (attending && !events) return setError("Please choose which part of the day you will attend.");
     setState("sending");
     try {
       const res = await fetch("/api/rsvp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ guest: guestSlug, name, attending, count, phone, message }),
+        body: JSON.stringify({ guest: guestSlug, name, attending, count, events, phone, message }),
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok || !data.ok) throw new Error(data.error || "Sorry, something went wrong. Please try again.");
-      setResult({ attending, count: data.count });
+      setResult({ attending, count: data.count, events: data.events ?? null });
       setState("done");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Sorry, something went wrong.");
@@ -56,7 +59,7 @@ export default function RsvpForm({ guestName, guestSlug, guest }: Props) {
           <>
             <p className="script-title">Thank you, {first}!</p>
             <p className="lead">
-              We are so happy you can come. We have saved{" "}
+              We are so happy you can come to {attendPhrase(result.events)}. We have saved{" "}
               <strong>
                 {result.count} {result.count === 1 ? "seat" : "seats"}
               </strong>{" "}
@@ -113,6 +116,26 @@ export default function RsvpForm({ guestName, guestSlug, guest }: Props) {
           </button>
         </div>
       </fieldset>
+
+      {attending && (
+        <fieldset className="field">
+          <legend>Which will you attend?</legend>
+          <div className="choice attend">
+            {attendOptions.map((o) => (
+              <button
+                key={o.value}
+                type="button"
+                className={events === o.value ? "on" : ""}
+                aria-pressed={events === o.value}
+                onClick={() => setEvents(o.value)}
+              >
+                <span className="attend-label">{o.label}</span>
+                <span className="attend-time">{o.time}</span>
+              </button>
+            ))}
+          </div>
+        </fieldset>
+      )}
 
       {attending && (
         <div className="field">

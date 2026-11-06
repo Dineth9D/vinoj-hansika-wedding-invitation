@@ -35,3 +35,33 @@ export const wedding = {
 
 export const coupleNames = `${wedding.partner1.first} & ${wedding.partner2.first}`;
 export const monogram = [wedding.partner1.first[0], wedding.partner2.first[0]] as const;
+
+// Which parts of the day a guest will come to.
+export type Attend = "both" | "mass" | "reception";
+
+export const attendOptions: { value: Attend; label: string; short: string; time: string }[] = [
+  {
+    value: "both",
+    label: `${wedding.events[0].title} & ${wedding.events[1].title}`,
+    short: "Both",
+    time: `${wedding.events[0].time} & ${wedding.events[1].time}`,
+  },
+  { value: "mass", label: `${wedding.events[0].title} only`, short: "Mass only", time: wedding.events[0].time },
+  { value: "reception", label: `${wedding.events[1].title} only`, short: "Reception only", time: wedding.events[1].time },
+];
+
+export function isAttend(v: unknown): v is Attend {
+  return v === "both" || v === "mass" || v === "reception";
+}
+
+/** Words for the thank-you note: "the Holy Mass and the Reception". */
+export function attendPhrase(a: Attend | null): string {
+  if (a === "mass") return `the ${wedding.events[0].title}`;
+  if (a === "reception") return `the ${wedding.events[1].title}`;
+  return `the ${wedding.events[0].title} and the ${wedding.events[1].title}`;
+}
+
+/** True when a guest's party is coming to that part of the day (older replies count as both). */
+export function goesTo(g: { status: string; events: Attend | null }, part: "mass" | "reception"): boolean {
+  return g.status === "attending" && (g.events === null || g.events === "both" || g.events === part);
+}

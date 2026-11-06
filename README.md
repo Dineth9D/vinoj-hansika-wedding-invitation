@@ -49,6 +49,9 @@ Aunty Mala, 2, 0771234567
 - The number after the first comma is how many seats this invitation has. If you leave it out, the "Default seats" value is used.
 - The phone number is optional. With a phone number, the WhatsApp button opens a chat with that person directly.
 - "People coming" at the top is the total head count from all replies.
+- Guests who accept also choose **Holy Mass & Reception**, **Holy Mass only** or **Reception only**.
+  "At the Holy Mass" and "At the Reception" show the head count for each, and the
+  **Holy Mass** / **Reception** tabs list who is coming to each.
 - **Download CSV** gives you the full list for Excel or Google Sheets.
 
 ## Run it on your computer

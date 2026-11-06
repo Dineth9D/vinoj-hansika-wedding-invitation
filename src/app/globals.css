@@ -775,6 +775,38 @@ textarea {
 .choice button:not(.on):hover {
   border-color: var(--gold);
 }
+/* "Which will you attend?": always one option per row */
+.choice.attend {
+  grid-template-columns: 1fr;
+}
+.choice.attend button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 24px;
+  text-align: left;
+}
+.attend-time {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  white-space: nowrap;
+}
+.choice button.on .attend-time {
+  color: rgba(255, 255, 255, 0.8);
+}
+@media (max-width: 520px) {
+  /* phones: time sits under the label */
+  .choice.attend button {
+    flex-direction: column;
+    justify-content: center;
+    gap: 0;
+    padding: 10px 16px;
+    text-align: center;
+  }
+}
 @media (max-width: 440px) {
   /* one answer per row on phones, so each fits on one line */
   .choice {

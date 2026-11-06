@@ -2,10 +2,10 @@
 
 import { useMemo, useState } from "react";
 import type { Guest, GuestStatus } from "@/lib/db";
-import { coupleNames } from "@/config/wedding";
+import { attendOptions, coupleNames, goesTo, type Attend } from "@/config/wedding";
 
 type Props = { initialGuests: Guest[]; origin: string };
-type Filter = "all" | GuestStatus | "open";
+type Filter = "all" | GuestStatus | "open" | "mass" | "reception";
 
 const STATUS_LABEL: Record<GuestStatus, string> = {
   pending: "Waiting",
@@ -40,6 +40,10 @@ export default function AdminDashboard({ initialGuests, origin }: Props) {
       invitations: invited.length,
       seatsInvited: sum(invited, (g) => g.seats),
       coming: sum(guests, (g) => g.attending_count),
+      atMass: sum(guests.filter((g) => goesTo(g, "mass")), (g) => g.attending_count),
+      atReception: sum(guests.filter((g) => goesTo(g, "reception")), (g) => g.attending_count),
+      massReplies: guests.filter((g) => goesTo(g, "mass")).length,
+      receptionReplies: guests.filter((g) => goesTo(g, "reception")).length,
       comingReplies: guests.filter((g) => g.status === "attending").length,
       declined: guests.filter((g) => g.status === "declined").length,
       waiting: invited.filter((g) => g.status === "pending").length,
@@ -52,7 +56,8 @@ export default function AdminDashboard({ initialGuests, origin }: Props) {
     const q = query.trim().toLowerCase();
     return guests.filter((g) => {
       if (filter === "open" && g.invited) return false;
-      if (filter !== "all" && filter !== "open" && g.status !== filter) return false;
+      if ((filter === "mass" || filter === "reception") && !goesTo(g, filter)) return false;
+      if ((filter === "pending" || filter === "attending" || filter === "declined") && g.status !== filter) return false;
       if (q && !(`${g.name} ${g.phone ?? ""}`.toLowerCase().includes(q))) return false;
       return true;
     });
@@ -136,6 +141,8 @@ export default function AdminDashboard({ initialGuests, origin }: Props) {
   const tabs: [Filter, string, number][] = [
     ["all", "All", guests.length],
     ["attending", "Coming", stats.comingReplies],
+    ["mass", "Holy Mass", stats.massReplies],
+    ["reception", "Reception", stats.receptionReplies],
     ["declined", "Not coming", stats.declined],
     ["pending", "Waiting", stats.waiting],
     ["open", "Not on list", stats.openReplies],
@@ -159,6 +166,16 @@ export default function AdminDashboard({ initialGuests, origin }: Props) {
           <span className="stat-num">{stats.coming}</span>
           <span className="stat-label">People coming</span>
           <span className="stat-sub">from {stats.comingReplies} replies</span>
+        </div>
+        <div className="stat">
+          <span className="stat-num">{stats.atMass}</span>
+          <span className="stat-label">At the Holy Mass</span>
+          <span className="stat-sub">3:00 PM · {stats.massReplies} replies</span>
+        </div>
+        <div className="stat">
+          <span className="stat-num">{stats.atReception}</span>
+          <span className="stat-label">At the Reception</span>
+          <span className="stat-sub">7:00 PM · {stats.receptionReplies} replies</span>
         </div>
         <div className="stat">
           <span className="stat-num">{stats.seatsInvited}</span>
@@ -249,6 +266,11 @@ export default function AdminDashboard({ initialGuests, origin }: Props) {
                       {STATUS_LABEL[g.status]}
                       {g.status === "attending" && ` · ${g.attending_count}`}
                     </span>
+                    {g.status === "attending" && (
+                      <small className="attend-tag">
+                        {attendOptions.find((o) => o.value === (g.events ?? "both"))!.short}
+                      </small>
+                    )}
                   </span>
                   <span role="cell" className="g-msg" title={g.message ?? ""}>
                     {g.message}
@@ -312,6 +334,19 @@ export default function AdminDashboard({ initialGuests, origin }: Props) {
                 />
               </label>
             </div>
+            {editing.status === "attending" && (
+              <label className="a-field">
+                <span>Attending</span>
+                <select
+                  value={editing.events ?? "both"}
+                  onChange={(e) => setEditing({ ...editing, events: e.target.value as Attend })}
+                >
+                  {attendOptions.map((o) => (
+                    <option key={o.value} value={o.value}>{o.label}</option>
+                  ))}
+                </select>
+              </label>
+            )}
             <div className="modal-actions">
               <button type="button" className="a-btn ghost" onClick={() => setEditing(null)}>Cancel</button>
               <button className="a-btn primary">Save</button>

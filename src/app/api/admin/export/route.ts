@@ -1,5 +1,6 @@
 import { isAdmin } from "@/lib/auth";
 import { db, type Guest } from "@/lib/db";
+import { attendOptions } from "@/config/wedding";
 
 export const dynamic = "force-dynamic";
 
@@ -14,11 +15,12 @@ export async function GET(req: Request) {
   const origin = new URL(req.url).origin;
   const sql = await db();
   const guests = await sql<Guest[]>`SELECT * FROM guests ORDER BY name`;
-  const head = ["Name", "Invited seats", "Status", "Coming", "Phone", "Message", "On guest list", "Replied at", "Link"];
+  const head = ["Name", "Invited seats", "Status", "Coming", "Attending", "Phone", "Message", "On guest list", "Replied at", "Link"];
   const lines = [head.map(cell).join(",")];
   for (const g of guests) {
     lines.push(
-      [g.name, g.seats, g.status, g.attending_count, g.phone, g.message, g.invited ? "yes" : "no",
+      [g.name, g.seats, g.status, g.attending_count,
+        g.status === "attending" ? attendOptions.find((o) => o.value === (g.events ?? "both"))!.label : "", g.phone, g.message, g.invited ? "yes" : "no",
         g.responded_at ? new Date(g.responded_at).toISOString() : "", `${origin}/?guest=${g.slug}`]
         .map(cell).join(","),
     );

@@ -1,6 +1,7 @@
 import { randomInt } from "node:crypto";
 import postgres from "postgres";
 import { slugify } from "./text";
+import type { Attend } from "@/config/wedding";
 
 export type GuestStatus = "pending" | "attending" | "declined";
 
@@ -12,6 +13,8 @@ export type Guest = {
   phone: string | null;
   status: GuestStatus;
   attending_count: number;
+  /** Which parts of the day; null for older replies (counted as both). */
+  events: Attend | null;
   message: string | null;
   invited: boolean;
   responded_at: string | null;
@@ -65,6 +68,7 @@ export async function db() {
           responded_at    TIMESTAMPTZ,
           created_at      TIMESTAMPTZ NOT NULL DEFAULT now()
         )`;
+      await sql`ALTER TABLE guests ADD COLUMN IF NOT EXISTS events TEXT`;
     })().catch((err) => {
       global.__schemaReady = undefined;
       throw err;
