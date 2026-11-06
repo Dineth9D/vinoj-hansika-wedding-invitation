@@ -30,17 +30,29 @@ export default function Invitation({ guestName, guestSlug, guest }: Props) {
   const [playing, setPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
 
-  const fadeTo = useCallback((target: number) => {
+  const fadeId = useRef(0);
+  const resumeOnReturn = useRef(false);
+
+  // Gently change the volume. iPhones (Safari and Chrome) do not let a page change
+  // the volume, so there the fade ends at once and `done` runs straight away.
+  const fadeTo = useCallback((target: number, done?: () => void) => {
     const a = audioRef.current;
     if (!a) return;
+    const id = ++fadeId.current; // a newer fade cancels this one
     const step = () => {
-      const diff = target - a.volume;
+      if (id !== fadeId.current) return;
+      const before = a.volume;
+      const diff = target - before;
       if (Math.abs(diff) < 0.04) {
         a.volume = target;
-        if (target === 0) a.pause();
+        done?.();
         return;
       }
-      a.volume = Math.min(1, Math.max(0, a.volume + Math.sign(diff) * 0.04));
+      a.volume = Math.min(1, Math.max(0, before + Math.sign(diff) * 0.04));
+      if (a.volume === before) {
+        done?.(); // volume is fixed on this device: stop fading
+        return;
+      }
       requestAnimationFrame(step);
     };
     step();
@@ -51,21 +63,56 @@ export default function Invitation({ guestName, guestSlug, guest }: Props) {
     if (!a) return;
     a.volume = 0;
     a.play()
-      .then(() => {
-        setPlaying(true);
-        fadeTo(0.55);
-      })
+      .then(() => fadeTo(0.55))
       .catch(() => setPlaying(false));
   }, [fadeTo]);
 
+  const stopMusic = useCallback(() => {
+    const a = audioRef.current;
+    if (!a) return;
+    setPlaying(false);
+    fadeTo(0, () => a.pause());
+  }, [fadeTo]);
+
   const toggleMusic = () => {
-    if (playing) {
-      setPlaying(false);
-      fadeTo(0);
-    } else {
-      playMusic();
-    }
+    const a = audioRef.current;
+    if (!a) return;
+    if (playing) stopMusic();
+    else playMusic();
   };
+
+  // Keep the button in step with the real player (also when the phone pauses it,
+  // for example for a call or from the lock screen).
+  useEffect(() => {
+    const a = audioRef.current;
+    if (!a) return;
+    const onPlay = () => setPlaying(true);
+    const onPause = () => setPlaying(false);
+    a.addEventListener("play", onPlay);
+    a.addEventListener("pause", onPause);
+    return () => {
+      a.removeEventListener("play", onPlay);
+      a.removeEventListener("pause", onPause);
+    };
+  }, []);
+
+  // Pause when the guest leaves the page or switches app; continue when they come back.
+  useEffect(() => {
+    const onVisibility = () => {
+      const a = audioRef.current;
+      if (!a) return;
+      if (document.hidden) {
+        resumeOnReturn.current = !a.paused;
+        fadeId.current++; // stop any fade in progress
+        a.pause();
+      } else if (resumeOnReturn.current) {
+        resumeOnReturn.current = false;
+        playMusic();
+      }
+    };
+    document.addEventListener("visibilitychange", onVisibility);
+    return () => document.removeEventListener("visibilitychange", onVisibility);
+  }, [playMusic]);
 
   const open = () => {
     if (stage !== "closed") return;
