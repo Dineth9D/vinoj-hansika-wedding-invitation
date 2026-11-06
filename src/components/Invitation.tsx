@@ -61,24 +61,37 @@ export default function Invitation({ guestName, guestSlug, guest }: Props) {
   const playMusic = useCallback(() => {
     const a = audioRef.current;
     if (!a) return;
-    a.volume = 0;
-    a.play()
-      .then(() => fadeTo(0.55))
-      .catch(() => setPlaying(false));
+    fadeId.current++; // cancel any fade in progress
+    // iPhones (Safari and Chrome) do not allow a page to change the volume.
+    const before = a.volume;
+    a.volume = before === 0.5 ? 0.4 : 0.5;
+    const canFade = a.volume !== before;
+    a.volume = canFade ? 0 : before;
+    const started = a.play();
+    if (started) {
+      started
+        .then(() => {
+          if (canFade) fadeTo(0.55);
+        })
+        .catch(() => setPlaying(!a.paused));
+    }
   }, [fadeTo]);
 
+  // Stop straight away. This works the same on every phone and browser.
   const stopMusic = useCallback(() => {
     const a = audioRef.current;
     if (!a) return;
+    fadeId.current++; // cancel any fade in progress
+    a.pause();
     setPlaying(false);
-    fadeTo(0, () => a.pause());
-  }, [fadeTo]);
+  }, []);
 
+  // Decide from the real player, not from what the button last showed.
   const toggleMusic = () => {
     const a = audioRef.current;
     if (!a) return;
-    if (playing) stopMusic();
-    else playMusic();
+    if (a.paused) playMusic();
+    else stopMusic();
   };
 
   // Keep the button in step with the real player (also when the phone pauses it,
@@ -88,12 +101,14 @@ export default function Invitation({ guestName, guestSlug, guest }: Props) {
     if (!a) return;
     const onPlay = () => setPlaying(true);
     const onPause = () => setPlaying(false);
-    a.addEventListener("play", onPlay);
-    a.addEventListener("pause", onPause);
-    return () => {
-      a.removeEventListener("play", onPlay);
-      a.removeEventListener("pause", onPause);
-    };
+    const events: [string, () => void][] = [
+      ["play", onPlay],
+      ["playing", onPlay],
+      ["pause", onPause],
+      ["ended", onPause],
+    ];
+    events.forEach(([name, fn]) => a.addEventListener(name, fn));
+    return () => events.forEach(([name, fn]) => a.removeEventListener(name, fn));
   }, []);
 
   // Pause when the guest leaves the page or switches app; continue when they come back.
