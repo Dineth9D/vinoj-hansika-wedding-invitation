@@ -38,7 +38,16 @@ The app creates its database table by itself the first time it runs.
 
 ## Adding guests
 
-In `/admin`, paste one invitation per line:
+In `/admin`, under **Add a guest**, fill in one row and press **Add** (or Enter):
+
+| Name | Seats | Phone (optional) |
+| --- | --- | --- |
+| Perera Family | 4 | 0771234567 |
+
+- **Seats** is how many people this invitation is for. It goes back to 2 after each guest.
+- With a **phone number**, the WhatsApp button opens a chat with that person directly.
+
+To add a long list at once, tap **Add many at once** and paste one invitation per line:
 
 ```
 Dineth
@@ -47,7 +56,6 @@ Aunty Mala, 2, 0771234567
 ```
 
 - The number after the first comma is how many seats this invitation has. If you leave it out, the "Default seats" value is used.
-- The phone number is optional. With a phone number, the WhatsApp button opens a chat with that person directly.
 - "People coming" at the top is the total head count from all replies.
 - Guests who accept also choose **Holy Mass & Reception**, **Holy Mass only** or **Reception only**.
   "At the Holy Mass" and "At the Reception" show the head count for each, and the

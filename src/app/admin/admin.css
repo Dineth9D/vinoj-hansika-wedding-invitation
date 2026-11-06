@@ -397,3 +397,38 @@
   font-size: 12px;
   color: var(--muted);
 }
+
+/* Add one guest: Name | Seats | Phone | Add */
+.add-one {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 12px;
+  align-items: end;
+}
+.add-one .a-field {
+  margin-bottom: 12px;
+}
+.add-one .add-name,
+.add-one .add-btn {
+  grid-column: 1 / -1;
+}
+.add-one .add-btn {
+  min-height: 44px;
+  margin-bottom: 12px;
+}
+@media (min-width: 760px) {
+  .add-one {
+    grid-template-columns: minmax(200px, 2fr) 100px minmax(160px, 1.3fr) auto;
+  }
+  .add-one .add-name,
+  .add-one .add-btn {
+    grid-column: auto;
+  }
+  .add-one .add-btn {
+    min-width: 110px;
+  }
+}
+.bulk-toggle {
+  margin: 16px 0 10px;
+  font-size: 14px;
+}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import type { Guest, GuestStatus } from "@/lib/db";
 import { attendOptions, coupleNames, goesTo, type Attend } from "@/config/wedding";
 
@@ -26,7 +26,12 @@ export default function AdminDashboard({ initialGuests, origin }: Props) {
   const [filter, setFilter] = useState<Filter>("all");
   const [query, setQuery] = useState("");
   const [bulk, setBulk] = useState("");
+  const [showBulk, setShowBulk] = useState(false);
   const [defaultSeats, setDefaultSeats] = useState(2);
+  const [newName, setNewName] = useState("");
+  const [newSeats, setNewSeats] = useState(2);
+  const [newPhone, setNewPhone] = useState("");
+  const nameInput = useRef<HTMLInputElement>(null);
   const [busy, setBusy] = useState(false);
   const [notice, setNotice] = useState("");
   const [editing, setEditing] = useState<Guest | null>(null);
@@ -77,6 +82,42 @@ export default function AdminDashboard({ initialGuests, origin }: Props) {
     }
   }
 
+  async function postGuests(list: { name: string; seats: number; phone: string }[]) {
+    setBusy(true);
+    const res = await fetch("/api/admin/guests", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ guests: list }),
+    });
+    const data = await res.json().catch(() => ({}));
+    setBusy(false);
+    if (res.ok && data.ok) {
+      setGuests((prev) => [...data.created, ...prev]);
+      return data.created as Guest[];
+    }
+    flash(data.error || "Could not add guests");
+    return null;
+  }
+
+  // One guest from the simple row form.
+  async function addOne(e: React.FormEvent) {
+    e.preventDefault();
+    const name = newName.trim();
+    if (!name) {
+      nameInput.current?.focus();
+      return;
+    }
+    const created = await postGuests([{ name, seats: newSeats, phone: newPhone.trim() }]);
+    if (created) {
+      flash(`Added ${created[0].name}`);
+      setNewName("");
+      setNewSeats(2); // back to the usual size, so the next guest is not given the wrong seats
+      setNewPhone("");
+      nameInput.current?.focus(); // ready for the next guest
+    }
+  }
+
+  // Many guests pasted at once, one per line.
   async function addGuests(e: React.FormEvent) {
     e.preventDefault();
     const list = bulk
@@ -89,20 +130,10 @@ export default function AdminDashboard({ initialGuests, origin }: Props) {
       })
       .filter((g) => g.name);
     if (!list.length) return;
-    setBusy(true);
-    const res = await fetch("/api/admin/guests", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ guests: list }),
-    });
-    const data = await res.json().catch(() => ({}));
-    setBusy(false);
-    if (res.ok && data.ok) {
-      setGuests((prev) => [...data.created, ...prev]);
+    const created = await postGuests(list);
+    if (created) {
       setBulk("");
-      flash(`Added ${data.created.length} ${data.created.length === 1 ? "guest" : "guests"}`);
-    } else {
-      flash(data.error || "Could not add guests");
+      flash(`Added ${created.length} ${created.length === 1 ? "guest" : "guests"}`);
     }
   }
 
@@ -195,9 +226,56 @@ export default function AdminDashboard({ initialGuests, origin }: Props) {
       </section>
 
       <section className="admin-card">
-        <h2>Add guests</h2>
+        <h2>Add a guest</h2>
+        <form onSubmit={addOne} className="add-one">
+          <label className="a-field add-name">
+            <span>Name</span>
+            <input
+              ref={nameInput}
+              value={newName}
+              onChange={(e) => setNewName(e.target.value)}
+              placeholder="e.g. Perera Family"
+              maxLength={80}
+              autoComplete="off"
+            />
+          </label>
+          <label className="a-field add-seats">
+            <span>Seats</span>
+            <input
+              type="number"
+              inputMode="numeric"
+              min={1}
+              max={50}
+              value={newSeats}
+              onChange={(e) => setNewSeats(Math.min(50, Math.max(1, Number(e.target.value) || 1)))}
+            />
+          </label>
+          <label className="a-field add-phone">
+            <span>Phone (optional)</span>
+            <input
+              type="tel"
+              value={newPhone}
+              onChange={(e) => setNewPhone(e.target.value)}
+              placeholder="07X XXX XXXX"
+              maxLength={30}
+              autoComplete="off"
+            />
+          </label>
+          <button className="a-btn primary add-btn" disabled={busy || !newName.trim()}>
+            {busy ? "Adding…" : "Add"}
+          </button>
+        </form>
+        <p className="admin-muted small">
+          Seats = how many people this invitation is for. The phone number lets the WhatsApp button open their chat.
+        </p>
+
+        <button type="button" className="a-link bulk-toggle" onClick={() => setShowBulk((v) => !v)} aria-expanded={showBulk}>
+          {showBulk ? "Hide" : "Add many at once"}
+        </button>
+        {showBulk && (
+        <>
         <p className="admin-muted">
-          One invitation per line. You can add the number of seats and a phone number after commas, for example:{" "}
+          Paste one invitation per line. Add the seats and phone after commas, for example:{" "}
           <code>Perera Family, 4, 0771234567</code>
         </p>
         <form onSubmit={addGuests} className="add-form">
@@ -214,10 +292,12 @@ export default function AdminDashboard({ initialGuests, origin }: Props) {
               <input type="number" min={1} max={50} value={defaultSeats} onChange={(e) => setDefaultSeats(Number(e.target.value) || 1)} />
             </label>
             <button className="a-btn primary" disabled={busy || !bulk.trim()}>
-              {busy ? "Adding…" : "Add to list"}
+              {busy ? "Adding…" : "Add all"}
             </button>
           </div>
         </form>
+        </>
+        )}
         <p className="admin-muted small">
           General link (for people not on the list):{" "}
           <button className="a-link" onClick={() => copy(`${origin}/`)}>{origin}/</button>
