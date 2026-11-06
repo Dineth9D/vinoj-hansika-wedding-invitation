@@ -85,7 +85,12 @@ export default function Invitation({ guestName, guestSlug, guest }: Props) {
   useEffect(() => {
     if (stage !== "open") return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const lenis = new Lenis({ autoRaf: true, lerp: 0.085, wheelMultiplier: 0.9, anchors: true });
+    const lenis = new Lenis({
+      autoRaf: true,
+      lerp: 0.065, // lower = longer, softer glide after each wheel step
+      wheelMultiplier: 0.85,
+      anchors: { duration: 1.6 },
+    });
     return () => lenis.destroy();
   }, [stage]);
 
