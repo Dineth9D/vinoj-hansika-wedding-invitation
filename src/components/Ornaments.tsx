@@ -38,7 +38,7 @@ export function GlassesIcon() {
 export function HeartIcon() {
   return (
     <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
-      <path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z" fill="#ead8b8" stroke="#b8925a" strokeWidth="1.3" strokeLinejoin="round" />
+      <path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z" fill="#f2d3dd" stroke="#c4a07c" strokeWidth="1.3" strokeLinejoin="round" />
     </svg>
   );
 }

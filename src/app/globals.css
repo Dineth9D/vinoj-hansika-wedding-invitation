@@ -1,17 +1,21 @@
-/* Colours are taken from the couple's photos: warm sunlight, cream dress,
-   dried-flower gold, olive leaves and a touch of terracotta. */
+/* Colours are taken from the couple's beach photos: blush pink (dress and shirt),
+   champagne gold (thread in the dress), soft sea blue, and deep cocoa (hair). */
 :root {
-  --cream: #faf6ef;
-  --paper: #fffdf9;
-  --sand: #f1e7d7;
-  --line: #e4d6bf;
-  --ink: #2f2a22;
-  --muted: #6b6052;
-  --gold: #b8925a;
-  --gold-deep: #7d5e30;
-  --olive: #8a8f68;
-  --olive-deep: #4b5236;
-  --terracotta: #a8432f;
+  --cream: #fcf8f7; /* page background */
+  --paper: #fffdfc; /* cards */
+  --blush-tint: #f8edef; /* soft pink bands */
+  --sea-mist: #edf3f7; /* soft sea-blue bands */
+  --line: #ecdbe0; /* borders and inputs */
+  --ink: #2e2326; /* main text: deep cocoa from the hair */
+  --muted: #6e5b61; /* secondary text */
+  --gold: #c4a07c; /* champagne gold from the dress thread: lines and ornaments only */
+  --gold-deep: #85613b; /* gold-coloured text */
+  --blush: #e2b4c2; /* the pink of the dress: decoration only */
+  --sea: #a9c4d8; /* the sea: decoration only */
+  --sea-deep: #3d6079; /* deep sea blue: links and small accents */
+  --accent: #9c4d66; /* dusty rose: main buttons and selected answers */
+  --accent-hover: #84405a;
+  --error: #b03a48;
 
   --font-script: "Pinyon Script", "Great Vibes", cursive;
   --font-serif: "Cormorant Garamond", Garamond, "Times New Roman", serif;
@@ -67,7 +71,7 @@ textarea {
 }
 
 :focus-visible {
-  outline: 2px solid var(--olive-deep);
+  outline: 2px solid var(--accent);
   outline-offset: 3px;
 }
 
@@ -87,7 +91,7 @@ textarea {
   padding: var(--section) 0;
 }
 .band {
-  background: var(--sand);
+  background: var(--blush-tint);
 }
 
 .eyebrow {
@@ -185,7 +189,7 @@ textarea {
   min-height: 52px;
   border: 0;
   border-radius: var(--radius-pill);
-  background: var(--olive-deep);
+  background: var(--accent);
   color: #fff;
   font-family: var(--font-sans);
   font-size: 15px;
@@ -196,7 +200,7 @@ textarea {
   transition: background 0.2s, transform 0.2s;
 }
 .btn-solid:hover {
-  background: #3b4129;
+  background: #84405a;
 }
 .btn-solid:disabled {
   opacity: 0.7;
@@ -239,7 +243,7 @@ textarea {
   bottom: 0;
   width: 50.5%;
   background:
-    linear-gradient(rgba(250, 246, 239, 0.86), rgba(250, 246, 239, 0.9)),
+    linear-gradient(rgba(252, 248, 247, 0.86), rgba(252, 248, 247, 0.9)),
     url("/images/cover-blur.jpg") center / cover no-repeat;
   transition: transform 1.3s cubic-bezier(0.7, 0, 0.25, 1) 0.35s;
 }
@@ -292,7 +296,7 @@ textarea {
   content: "";
   position: absolute;
   inset: 6px;
-  border: 1px solid rgba(184, 146, 90, 0.55);
+  border: 1px solid rgba(196, 160, 124, 0.55);
   pointer-events: none;
 }
 .cover.is-opening .cover-frame {
@@ -417,7 +421,7 @@ textarea {
 .hero-photo {
   position: absolute;
   inset: 0;
-  background: url("/images/couple-1.jpg") 40% 30% / cover no-repeat;
+  background: url("/images/couple-1.jpg") 50% 24% / cover no-repeat;
   animation: slow-zoom 18s ease-out both;
   will-change: transform;
 }
@@ -425,14 +429,14 @@ textarea {
   /* smaller, pre-cropped photo for phones and tall screens */
   .hero-photo {
     background-image: url("/images/couple-1-mobile.jpg");
-    background-position: 50% 30%;
+    background-position: 42% 30%;
   }
 }
 .hero-shade {
   position: absolute;
   inset: 0;
   background:
-    linear-gradient(180deg, rgba(30, 24, 14, 0.1) 0%, rgba(30, 24, 14, 0) 35%, rgba(30, 24, 14, 0.62) 100%);
+    linear-gradient(180deg, rgba(32, 22, 28, 0.1) 0%, rgba(32, 22, 28, 0) 35%, rgba(32, 22, 28, 0.62) 100%);
 }
 .hero-text {
   position: relative;
@@ -452,7 +456,7 @@ textarea {
   font-family: var(--font-serif);
   font-style: italic;
   font-size: 0.5em;
-  color: #f3dfb8;
+  color: #f6d6e0;
 }
 .hero-date {
   font-size: clamp(18px, 3vw, 24px);
@@ -509,7 +513,7 @@ textarea {
   width: 10px;
   height: 14px;
   border-radius: 10px 0 10px 0;
-  background: rgba(243, 223, 184, 0.85);
+  background: rgba(255, 238, 244, 0.9);
   animation: fall linear infinite;
   pointer-events: none;
   will-change: transform, opacity;
@@ -519,7 +523,7 @@ textarea {
   animation-play-state: paused;
 }
 .petals span:nth-child(3n) {
-  background: rgba(214, 140, 110, 0.7);
+  background: rgba(226, 180, 194, 0.85);
   width: 8px;
   height: 11px;
 }
@@ -598,7 +602,7 @@ textarea {
 /* Date + countdown */
 .date-section {
   /* soft paper with light speckles */
-  background-color: #f4f1eb;
+  background-color: #edf3f7;
   background-image: var(--paper-texture);
   text-align: center;
 }
@@ -629,7 +633,7 @@ textarea {
   padding: 4px clamp(8px, 2vw, 24px) 8px;
 }
 .cd-box + .cd-box {
-  border-left: 1px solid #e2d3b8;
+  border-left: 1px solid #e6d3c3;
 }
 .cd-num {
   font-family: var(--font-serif);
@@ -748,8 +752,8 @@ textarea {
 .field input:focus,
 .field textarea:focus {
   outline: none;
-  border-color: var(--olive-deep);
-  box-shadow: 0 0 0 3px rgba(75, 82, 54, 0.18);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(156, 77, 102, 0.18);
 }
 .choice {
   display: grid;
@@ -768,8 +772,8 @@ textarea {
   transition: all 0.2s;
 }
 .choice button.on {
-  background: var(--olive-deep);
-  border-color: var(--olive-deep);
+  background: var(--accent);
+  border-color: var(--accent);
   color: #fff;
 }
 .choice button:not(.on):hover {
@@ -842,7 +846,7 @@ textarea {
   font-weight: 600;
 }
 .form-error {
-  color: var(--terracotta);
+  color: var(--error);
   font-family: var(--font-sans);
   font-size: 15px;
   margin: 0 0 16px;
@@ -894,20 +898,20 @@ textarea {
 
 /* RSVP wedding card */
 .paper-section {
-  background-color: #efebe3;
+  background-color: #f6ebee;
   background-image: var(--paper-texture);
 }
 .wedding-card {
   max-width: 680px;
   margin: 0 auto;
   padding: clamp(6px, 1.2vw, 9px);
-  background-color: #faf9f6;
+  background-color: #fffcfc;
   background-image: var(--paper-texture);
-  border: 1px solid #e7e1d6;
-  box-shadow: 0 28px 50px -30px rgba(47, 42, 34, 0.35), 0 2px 6px rgba(47, 42, 34, 0.05);
+  border: 1px solid #efe3e6;
+  box-shadow: 0 28px 50px -30px rgba(46, 35, 38, 0.35), 0 2px 6px rgba(46, 35, 38, 0.05);
 }
 .wedding-card-inner {
-  border: 1px solid #e3cfac;
+  border: 1px solid #e3cbb4;
   padding: clamp(36px, 7vw, 64px) clamp(18px, 6vw, 64px) clamp(32px, 6vw, 48px);
   text-align: center;
 }
@@ -927,7 +931,7 @@ textarea {
 .wc-blessing {
   font-style: italic;
   font-size: 17px;
-  color: #4e463b;
+  color: #4f4044;
   margin: 0 0 var(--space-6);
 }
 .wc-blessing svg {
@@ -952,11 +956,11 @@ textarea {
 .wedding-card .field textarea,
 .wedding-card .choice button:not(.on),
 .wedding-card .stepper {
-  background: #fffefb;
+  background: #fffefe;
 }
 .wc-rule {
   border: 0;
-  border-top: 1px solid #ddd8cf;
+  border-top: 1px solid #e8d9dd;
   margin: clamp(32px, 6vw, 48px) 0 var(--space-6);
 }
 .wc-call {
@@ -970,7 +974,7 @@ textarea {
   gap: 10px;
   min-height: 46px;
   padding: 0 22px;
-  border: 1px solid #e3cfac;
+  border: 1px solid #e3cbb4;
   color: var(--ink);
   font-size: 19px;
   text-decoration: none;
@@ -980,7 +984,7 @@ textarea {
   color: var(--gold);
 }
 .call-btn:hover {
-  background: #fffefb;
+  background: #fffefe;
   border-color: var(--gold);
 }
 
@@ -994,8 +998,8 @@ textarea {
   height: 52px;
   border-radius: 50%;
   border: 1px solid var(--gold);
-  background: rgba(255, 253, 249, 0.92);
-  box-shadow: 0 6px 20px rgba(47, 42, 34, 0.15);
+  background: rgba(255, 253, 252, 0.92);
+  box-shadow: 0 6px 20px rgba(46, 35, 38, 0.15);
   cursor: pointer;
   display: grid;
   place-items: center;
