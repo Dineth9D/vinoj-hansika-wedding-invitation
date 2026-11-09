@@ -421,7 +421,7 @@ textarea {
 .hero-photo {
   position: absolute;
   inset: 0;
-  background: url("/images/couple-1.jpg") 50% 24% / cover no-repeat;
+  background: url("/images/couple-1.jpg") 50% 32% / cover no-repeat;
   animation: slow-zoom 18s ease-out both;
   will-change: transform;
 }
@@ -429,7 +429,7 @@ textarea {
   /* smaller, pre-cropped photo for phones and tall screens */
   .hero-photo {
     background-image: url("/images/couple-1-mobile.jpg");
-    background-position: 42% 30%;
+    background-position: 50% 30%;
   }
 }
 .hero-shade {
