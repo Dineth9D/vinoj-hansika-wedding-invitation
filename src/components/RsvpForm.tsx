@@ -8,6 +8,8 @@ type Props = {
   guestName: string;
   guestSlug: string;
   guest: GuestInfo | null;
+  /** false = no personal link: show a note instead of the form. */
+  canReply: boolean;
   /** The "Dear …" greeting. Shown with the form only; after confirming, only the thank-you shows. */
   intro?: ReactNode;
 };
@@ -50,7 +52,7 @@ function AcceptDecline({
   );
 }
 
-export default function RsvpForm({ guestName, guestSlug, guest, intro }: Props) {
+export default function RsvpForm({ guestName, guestSlug, guest, canReply, intro }: Props) {
   const reserved = guest?.seats ?? null; // seats on the guest list; null = general link
   const maxSeats = reserved ?? wedding.openLinkMaxSeats;
   const alreadyReplied = !!guest && guest.status !== "pending";
@@ -128,6 +130,18 @@ export default function RsvpForm({ guestName, guestSlug, guest, intro }: Props) 
           Change my reply
         </button>
       </div>
+    );
+  }
+
+  if (!canReply) {
+    return (
+      <>
+        {intro}
+        <h2 className="wc-title">Kindly RSVP</h2>
+        <p className="rsvp-reserved">
+          Please reply using the personal invitation link we sent you. If you can&apos;t find it, just give us a call.
+        </p>
+      </>
     );
   }
 

@@ -29,7 +29,11 @@ export const wedding = {
   contact: { phone: "077 822 2835", tel: "+94778222835", name: "Vinoj" },
   // Credit at the very bottom of the page. Set url to "" to show plain text.
   credit: { name: "Dineth", url: "https://www.linkedin.com/in/dineth9d/" },
-  // Largest party size a guest can enter when they are not on the guest list.
+  // false = only personal links made in /admin (e.g. ?guest=pravil-k7m2) can reply.
+  // The plain link still shows the invitation, but without the reply form.
+  // true = anyone with the plain link can reply and is added as "Not on list".
+  openRsvp: false,
+  // Largest party size someone can enter from the plain link (only used when openRsvp is true).
   openLinkMaxSeats: 6,
 } as const;
 

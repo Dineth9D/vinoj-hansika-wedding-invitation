@@ -17,7 +17,7 @@ export type GuestInfo = {
   events: Attend | null;
 };
 
-type Props = { guestName: string; guestSlug: string; guest: GuestInfo | null };
+type Props = { guestName: string; guestSlug: string; guest: GuestInfo | null; canReply: boolean };
 
 // Fixed positions so the server and the browser draw the same petals.
 const PETALS = [
@@ -25,7 +25,7 @@ const PETALS = [
   [64, 9, 11], [75, 2.5, 16], [86, 6, 12], [94, 10, 14], [35, 12, 13],
 ];
 
-export default function Invitation({ guestName, guestSlug, guest }: Props) {
+export default function Invitation({ guestName, guestSlug, guest, canReply }: Props) {
   const [stage, setStage] = useState<"closed" | "opening" | "open">("closed");
   const [playing, setPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
@@ -310,6 +310,7 @@ export default function Invitation({ guestName, guestSlug, guest }: Props) {
                   guestName={guestName}
                   guestSlug={guestSlug}
                   guest={guest}
+                  canReply={canReply}
                   intro={
                     /* shown only until the guest confirms */
                     <>

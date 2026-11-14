@@ -2,7 +2,7 @@
 
 import { useMemo, useRef, useState } from "react";
 import type { Guest, GuestStatus } from "@/lib/db";
-import { attendOptions, coupleNames, goesTo, type Attend } from "@/config/wedding";
+import { attendOptions, coupleNames, goesTo, wedding, type Attend } from "@/config/wedding";
 
 type Props = { initialGuests: Guest[]; origin: string };
 type Filter = "all" | GuestStatus | "open" | "mass" | "reception";
@@ -299,7 +299,9 @@ export default function AdminDashboard({ initialGuests, origin }: Props) {
         </>
         )}
         <p className="admin-muted small">
-          General link (for people not on the list):{" "}
+          {wedding.openRsvp
+            ? "Anyone with the plain link can also reply: "
+            : "Only personal links can reply. The plain link shows the invitation without the reply form: "}
           <button className="a-link" onClick={() => copy(`${origin}/`)}>{origin}/</button>
         </p>
       </section>

@@ -17,7 +17,8 @@ https://your-site.vercel.app/?guest=pravil-k7m2
 The page then says "Dear Pravil" and saves the reply against Pravil's row.
 The short code at the end (`k7m2`) is random, so nobody can guess another guest's link or reply for them.
 Always send the link from the admin page (**Copy link** or **WhatsApp**).
-The link `https://your-site.vercel.app/` (with no name) also works. People who use it type their own name, and they show up as "Not on list" in the admin page.
+
+Only personal links can reply. The plain link `https://your-site.vercel.app/` still shows the invitation, but instead of the reply form it asks the visitor to use their personal link or call. (To allow anyone to reply from the plain link, set `openRsvp: true` in `src/config/wedding.ts`.)
 
 ## Change the wedding details
 

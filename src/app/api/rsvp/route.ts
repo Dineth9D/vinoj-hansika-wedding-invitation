@@ -26,7 +26,6 @@ export async function POST(req: Request) {
   const message = cleanText(body.message, 500) || null;
   const rawCount = Number(body.count);
 
-  if (!name) return bad("Please enter your name.");
   if (typeof body.attending !== "boolean") return bad("Please tell us if you can come.");
   if (attending && !isAttend(body.events)) return bad("Please choose which part of the day you will attend.");
   const events = attending && isAttend(body.events) ? body.events : null;
@@ -35,10 +34,17 @@ export async function POST(req: Request) {
     const sql = await db();
 
     // 1. The guest's own link (?guest=...), or
-    // 2. someone not on the list who already replied with the same name.
-    // A typed name never matches an invited guest, so nobody can reply for them.
+    // 2. (only when open replies are allowed) someone not on the list who already
+    //    replied with the same name. A typed name never matches an invited guest.
     let guest: Guest | null = guestParam ? await findGuestBySlug(guestParam) : null;
-    if (!guest) guest = await findOpenGuestByName(name);
+    if (!wedding.openRsvp) {
+      if (!guest || !guest.invited) {
+        return bad("Please use the personal invitation link you received to reply.", 403);
+      }
+    } else {
+      if (!name) return bad("Please enter your name.");
+      if (!guest) guest = await findOpenGuestByName(name);
+    }
 
     const maxSeats = guest?.invited ? guest.seats : wedding.openLinkMaxSeats;
     const count = attending
@@ -57,7 +63,7 @@ export async function POST(req: Request) {
           seats = ${guest.invited ? guest.seats : Math.max(count, 1)},
           responded_at = now()
         WHERE id = ${guest.id}`;
-    } else {
+    } else if (wedding.openRsvp) {
       const slug = await newGuestSlug(name);
       await sql`
         INSERT INTO guests (name, slug, seats, phone, status, attending_count, events, message, invited, responded_at)

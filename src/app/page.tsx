@@ -1,6 +1,7 @@
 import Invitation, { type GuestInfo } from "@/components/Invitation";
 import { findGuestBySlug, hasDatabase } from "@/lib/db";
 import { nameFromParam, slugify } from "@/lib/text";
+import { wedding } from "@/config/wedding";
 
 export const dynamic = "force-dynamic";
 
@@ -15,7 +16,8 @@ export default async function Page({ searchParams }: Props) {
   if (slug && hasDatabase()) {
     try {
       const g = await findGuestBySlug(slug);
-      if (g) {
+      // When only personal links may reply, a link must belong to someone on the guest list.
+      if (g && (g.invited || wedding.openRsvp)) {
         guest = {
           name: g.name,
           slug: g.slug,
@@ -30,6 +32,8 @@ export default async function Page({ searchParams }: Props) {
     }
   }
 
-  const name = guest?.name ?? (raw ? nameFromParam(raw) : "");
-  return <Invitation guestName={name} guestSlug={slug} guest={guest} />;
+  // Unknown links get a plain "Dear Guest" unless anyone may reply.
+  const name = guest?.name ?? (raw && wedding.openRsvp ? nameFromParam(raw) : "");
+  const canReply = guest !== null || wedding.openRsvp;
+  return <Invitation guestName={name} guestSlug={slug} guest={guest} canReply={canReply} />;
 }
