@@ -6,7 +6,7 @@ import "lenis/dist/lenis.css";
 import { coupleNames, monogram, wedding, type Attend } from "@/config/wedding";
 import Countdown from "./Countdown";
 import RsvpForm from "./RsvpForm";
-import { ChurchIcon, Divider, GlassesIcon, HeartIcon, PhoneIcon, PinIcon } from "./Ornaments";
+import { ChurchIcon, DateText, Divider, GlassesIcon, HeartIcon, PhoneIcon, PinIcon } from "./Ornaments";
 
 export type GuestInfo = {
   name: string;
@@ -208,7 +208,9 @@ export default function Invitation({ guestName, guestSlug, guest }: Props) {
                 <span>{wedding.partner2.first}</span>
               </h1>
               <Divider />
-              <p className="cover-date">{wedding.dateLong}</p>
+              <p className="cover-date">
+                <DateText text={wedding.dateLong} />
+              </p>
               <p className="cover-venue">
                 {wedding.events.map((e) => `${e.place}, ${e.area}`).join("  ·  ")}
               </p>
@@ -267,7 +269,9 @@ export default function Invitation({ guestName, guestSlug, guest }: Props) {
         {/* Countdown */}
         <section className="section date-section" aria-label="Wedding date">
           <div className="container reveal">
-            <h2 className="big-date">{wedding.dateLong}</h2>
+            <h2 className="big-date">
+              <DateText text={wedding.dateLong} />
+            </h2>
             <Divider />
             <Countdown target={wedding.dateISO} />
           </div>

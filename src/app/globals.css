@@ -226,6 +226,15 @@ textarea {
   padding: clamp(20px, 5vw, 40px);
 }
 
+/* the small raised "th" in "11th" */
+.ordinal {
+  font-size: 0.55em;
+  line-height: 0; /* does not push the line apart */
+  vertical-align: super;
+  margin-left: 0.04em;
+  letter-spacing: 0;
+}
+
 /* ---------- Opening cover ---------- */
 
 .cover {

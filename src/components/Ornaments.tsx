@@ -1,3 +1,21 @@
+/** "December 11th, 2026" with a small raised "th" (also st, nd, rd). */
+export function DateText({ text }: { text: string }) {
+  const parts = text.split(/(\d+)(st|nd|rd|th)\b/);
+  return (
+    <>
+      {parts.map((part, i) =>
+        i % 3 === 2 ? (
+          <sup className="ordinal" key={i}>
+            {part}
+          </sup>
+        ) : (
+          part
+        ),
+      )}
+    </>
+  );
+}
+
 export function Divider() {
   return (
     <div className="divider" aria-hidden="true">
