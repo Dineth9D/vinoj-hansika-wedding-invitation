@@ -760,6 +760,7 @@ textarea {
 }
 .rsvp-done {
   text-align: center;
+  margin-top: 0; /* it is the first thing in the card after confirming */
 }
 .field {
   display: flex;

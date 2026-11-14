@@ -306,18 +306,27 @@ export default function Invitation({ guestName, guestSlug, guest }: Props) {
           <div className="container reveal">
             <div className="wedding-card">
               <div className="wedding-card-inner">
-                <p className="wc-dear">Dear {greetingName},</p>
-                <p className="wc-text">
-                  Two hearts and a new chapter, as we celebrate the beginning of our journey together.
-                </p>
-                <p className="wc-blessing">
-                  Your presence and blessings would mean the{" "}
-                  <span className="nowrap">
-                    world to us. <HeartIcon />
-                  </span>
-                </p>
-                <Divider />
-                <RsvpForm guestName={guestName} guestSlug={guestSlug} guest={guest} />
+                <RsvpForm
+                  guestName={guestName}
+                  guestSlug={guestSlug}
+                  guest={guest}
+                  intro={
+                    /* shown only until the guest confirms */
+                    <>
+                      <p className="wc-dear">Dear {greetingName},</p>
+                      <p className="wc-text">
+                        Two hearts and a new chapter, as we celebrate the beginning of our journey together.
+                      </p>
+                      <p className="wc-blessing">
+                        Your presence and blessings would mean the{" "}
+                        <span className="nowrap">
+                          world to us. <HeartIcon />
+                        </span>
+                      </p>
+                      <Divider />
+                    </>
+                  }
+                />
                 <hr className="wc-rule" />
                 <p className="wc-call">Rather call? Reach us on</p>
                 <a className="call-btn" href={`tel:${wedding.contact.tel}`}>

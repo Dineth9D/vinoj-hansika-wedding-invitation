@@ -1,10 +1,16 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import { attendPhrase, wedding, type Attend } from "@/config/wedding";
 import type { GuestInfo } from "./Invitation";
 
-type Props = { guestName: string; guestSlug: string; guest: GuestInfo | null };
+type Props = {
+  guestName: string;
+  guestSlug: string;
+  guest: GuestInfo | null;
+  /** The "Dear …" greeting. Shown with the form only; after confirming, only the thank-you shows. */
+  intro?: ReactNode;
+};
 type Answer = boolean | null; // true = joyfully accept, false = regretfully decline, null = not answered yet
 
 const [MASS, RECEPTION] = wedding.events;
@@ -44,7 +50,7 @@ function AcceptDecline({
   );
 }
 
-export default function RsvpForm({ guestName, guestSlug, guest }: Props) {
+export default function RsvpForm({ guestName, guestSlug, guest, intro }: Props) {
   const reserved = guest?.seats ?? null; // seats on the guest list; null = general link
   const maxSeats = reserved ?? wedding.openLinkMaxSeats;
   const alreadyReplied = !!guest && guest.status !== "pending";
@@ -105,7 +111,7 @@ export default function RsvpForm({ guestName, guestSlug, guest }: Props) {
           <>
             <p className="script-title">Thank you, {who}!</p>
             <p className="lead">
-              We are so happy you can come to {attendPhrase(result.events)}. We have saved{" "}
+              We are so happy you can come to {attendPhrase(result.events)}. We have reserved{" "}
               <strong>
                 {result.count} {result.count === 1 ? "seat" : "seats"}
               </strong>{" "}
@@ -127,6 +133,7 @@ export default function RsvpForm({ guestName, guestSlug, guest }: Props) {
 
   return (
     <>
+      {intro}
       <h2 className="wc-title">Kindly RSVP</h2>
       {reserved !== null && (
         <p className="rsvp-reserved">
