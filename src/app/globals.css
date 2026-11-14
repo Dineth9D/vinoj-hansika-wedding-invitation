@@ -192,10 +192,9 @@ textarea {
   background: var(--accent);
   color: #fff;
   font-family: var(--font-sans);
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 500;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
+  letter-spacing: 0.08em;
   cursor: pointer;
   transition: background 0.2s, transform 0.2s;
 }
@@ -831,40 +830,61 @@ textarea {
 .choice button:not(.on):hover {
   border-color: var(--gold);
 }
-/* "Which will you attend?": always one option per row */
-.choice.attend {
-  grid-template-columns: 1fr;
-}
-.choice.attend button {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 8px 24px;
-  text-align: left;
-}
-.attend-time {
-  font-family: var(--font-sans);
-  font-size: 13px;
-  letter-spacing: 0.06em;
+/* RSVP questions: one per part of the day, Accept / Decline side by side */
+.rsvp-reserved {
+  margin: 10px 0 0;
+  text-align: center;
+  font-style: italic;
+  font-size: 18px;
   color: var(--muted);
+}
+.rsvp-question {
+  margin: 0 0 26px;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+  text-align: center;
+}
+.rsvp-eyebrow {
+  width: 100%;
+  padding: 0;
+  margin: 0 0 6px;
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--gold-deep);
+}
+.rsvp-ask {
+  margin: 0 0 14px;
+  font-size: clamp(21px, 4.6vw, 25px);
+  line-height: 1.3;
+  color: var(--ink);
+}
+.choice.pair {
+  gap: 8px;
+}
+.choice.pair button {
+  font-size: clamp(15px, 4vw, 17px);
+  padding: 8px 6px;
+  line-height: 1.2;
   white-space: nowrap;
 }
-.choice button.on .attend-time {
-  color: rgba(255, 255, 255, 0.8);
+.rsvp-count {
+  align-items: center;
+  text-align: center;
 }
-@media (max-width: 520px) {
-  /* phones: time sits under the label */
-  .choice.attend button {
-    flex-direction: column;
-    justify-content: center;
-    gap: 0;
-    padding: 10px 16px;
-    text-align: center;
-  }
+.rsvp-note {
+  margin: 0 0 12px;
+  font-size: 17px;
+  line-height: 1.5;
+  color: var(--muted);
+  max-width: 30em;
 }
-@media (max-width: 440px) {
-  /* one answer per row on phones, so each fits on one line */
+
+@media (max-width: 359px) {
+  /* very narrow phones: one answer per row, so each fits on one line */
   .choice {
     grid-template-columns: 1fr;
   }

@@ -254,7 +254,7 @@ export default function Invitation({ guestName, guestSlug, guest }: Props) {
             <div className="welcome-text reveal">
               <p className="script-title">Together with our families,</p>
               <p className="lead">
-                we joyfully invite you to celebrate our wedding and share in the happiness of our special day.
+                We joyfully invite you to celebrate our wedding and share in the happiness of our special day.
               </p>
               <Divider />
               <p className="couple-full">

@@ -1,49 +1,95 @@
 "use client";
 
 import { useState } from "react";
-import { attendOptions, attendPhrase, wedding, type Attend } from "@/config/wedding";
+import { attendPhrase, wedding, type Attend } from "@/config/wedding";
 import type { GuestInfo } from "./Invitation";
 
 type Props = { guestName: string; guestSlug: string; guest: GuestInfo | null };
+type Answer = boolean | null; // true = joyfully accept, false = regretfully decline, null = not answered yet
+
+const [MASS, RECEPTION] = wedding.events;
+
+/** Turn the two answers into what we store: both / mass / reception, or not coming. */
+function toEvents(mass: Answer, reception: Answer): Attend | null {
+  if (mass && reception) return "both";
+  if (mass) return "mass";
+  if (reception) return "reception";
+  return null;
+}
+
+function AcceptDecline({
+  label,
+  question,
+  value,
+  onChange,
+}: {
+  label: string;
+  question: string;
+  value: Answer;
+  onChange: (v: boolean) => void;
+}) {
+  return (
+    <fieldset className="rsvp-question">
+      <legend className="rsvp-eyebrow">{label}</legend>
+      <p className="rsvp-ask">{question}</p>
+      <div className="choice pair">
+        <button type="button" className={value === true ? "on" : ""} aria-pressed={value === true} onClick={() => onChange(true)}>
+          Joyfully Accept
+        </button>
+        <button type="button" className={value === false ? "on" : ""} aria-pressed={value === false} onClick={() => onChange(false)}>
+          Regretfully Decline
+        </button>
+      </div>
+    </fieldset>
+  );
+}
 
 export default function RsvpForm({ guestName, guestSlug, guest }: Props) {
-  const maxSeats = guest?.seats ?? wedding.openLinkMaxSeats;
-  const alreadyReplied = guest && guest.status !== "pending";
+  const reserved = guest?.seats ?? null; // seats on the guest list; null = general link
+  const maxSeats = reserved ?? wedding.openLinkMaxSeats;
+  const alreadyReplied = !!guest && guest.status !== "pending";
 
-  const [name, setName] = useState(guestName);
-  const [attending, setAttending] = useState<boolean | null>(
-    alreadyReplied ? guest.status === "attending" : null,
-  );
+  // Earlier replies (also ones made with the old form) fill in the answers.
+  const was = guest?.status === "attending" ? (guest.events ?? "both") : null;
+  const [mass, setMass] = useState<Answer>(alreadyReplied ? was === "both" || was === "mass" : null);
+  const [reception, setReception] = useState<Answer>(alreadyReplied ? was === "both" || was === "reception" : null);
+
+  // The name only needs typing on the general link, when we do not know who this is.
+  const askName = !guestName;
+  const [typedName, setTypedName] = useState("");
+  const name = askName ? typedName : guestName;
+
   const [count, setCount] = useState(
-    alreadyReplied && guest.attendingCount > 0 ? guest.attendingCount : Math.min(guest?.seats ?? 1, maxSeats),
+    alreadyReplied && guest.attendingCount > 0 ? Math.min(guest.attendingCount, maxSeats) : reserved ?? 1,
   );
-  const [events, setEvents] = useState<Attend | null>(alreadyReplied ? guest.events : null);
-  const [phone, setPhone] = useState("");
   const [message, setMessage] = useState("");
   const [state, setState] = useState<"form" | "sending" | "done">(alreadyReplied ? "done" : "form");
   const [error, setError] = useState("");
-  const [result, setResult] = useState<{ attending: boolean; count: number; events: Attend | null }>({
-    attending: guest?.status === "attending",
+  const [result, setResult] = useState<{ count: number; events: Attend | null }>({
     count: guest?.attendingCount ?? 0,
-    events: guest?.events ?? null,
+    events: guest?.status === "attending" ? (guest.events ?? "both") : null,
   });
+
+  const comingToSomething = mass === true || reception === true;
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     setError("");
     if (!name.trim()) return setError("Please enter your name.");
-    if (attending === null) return setError("Please choose if you can come.");
-    if (attending && !events) return setError("Please choose which part of the day you will attend.");
+    if (mass === null) return setError(`Please let us know if you can join us for the ${MASS.title}.`);
+    if (reception === null) return setError(`Please let us know if you can join us for the ${RECEPTION.title}.`);
+    const events = toEvents(mass, reception);
+    const attending = events !== null;
     setState("sending");
     try {
       const res = await fetch("/api/rsvp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ guest: guestSlug, name, attending, count, events, phone, message }),
+        body: JSON.stringify({ guest: guestSlug, name, attending, count: attending ? count : 0, events, message }),
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok || !data.ok) throw new Error(data.error || "Sorry, something went wrong. Please try again.");
-      setResult({ attending, count: data.count, events: data.events ?? null });
+      setResult({ count: data.count, events: data.events ?? null });
       setState("done");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Sorry, something went wrong.");
@@ -52,12 +98,12 @@ export default function RsvpForm({ guestName, guestSlug, guest }: Props) {
   }
 
   if (state === "done") {
-    const first = name.trim() || "friend";
+    const who = name.trim() || "friend";
     return (
       <div className="rsvp-done" role="status">
-        {result.attending ? (
+        {result.events ? (
           <>
-            <p className="script-title">Thank you, {first}!</p>
+            <p className="script-title">Thank you, {who}!</p>
             <p className="lead">
               We are so happy you can come to {attendPhrase(result.events)}. We have saved{" "}
               <strong>
@@ -68,7 +114,7 @@ export default function RsvpForm({ guestName, guestSlug, guest }: Props) {
           </>
         ) : (
           <>
-            <p className="script-title">Thank you, {first}</p>
+            <p className="script-title">Thank you, {who}</p>
             <p className="lead">We are sorry you can&apos;t come. You will be in our hearts on our special day.</p>
           </>
         )}
@@ -81,106 +127,80 @@ export default function RsvpForm({ guestName, guestSlug, guest }: Props) {
 
   return (
     <>
-    <h2 className="wc-title">Kindly reply</h2>
-    <form className="rsvp" onSubmit={submit} noValidate>
-      <label className="field">
-        <span>Your name</span>
-        <input
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          autoComplete="name"
-          maxLength={80}
-          placeholder="Full name"
-          required
-        />
-      </label>
-
-      <fieldset className="field">
-        <legend>Can you come?</legend>
-        <div className="choice">
-          <button
-            type="button"
-            className={attending === true ? "on" : ""}
-            aria-pressed={attending === true}
-            onClick={() => setAttending(true)}
-          >
-            Joyfully accept
-          </button>
-          <button
-            type="button"
-            className={attending === false ? "on" : ""}
-            aria-pressed={attending === false}
-            onClick={() => setAttending(false)}
-          >
-            Regretfully decline
-          </button>
-        </div>
-      </fieldset>
-
-      {attending && (
-        <fieldset className="field">
-          <legend>Which will you attend?</legend>
-          <div className="choice attend">
-            {attendOptions.map((o) => (
-              <button
-                key={o.value}
-                type="button"
-                className={events === o.value ? "on" : ""}
-                aria-pressed={events === o.value}
-                onClick={() => setEvents(o.value)}
-              >
-                <span className="attend-label">{o.label}</span>
-                <span className="attend-time">{o.time}</span>
-              </button>
-            ))}
-          </div>
-        </fieldset>
-      )}
-
-      {attending && (
-        <div className="field">
-          <span id="count-label">Number of guests (including you)</span>
-          <div className="stepper" role="group" aria-labelledby="count-label">
-            <button type="button" onClick={() => setCount((c) => Math.max(1, c - 1))} aria-label="Fewer guests" disabled={count <= 1}>
-              −
-            </button>
-            <output aria-live="polite">{count}</output>
-            <button type="button" onClick={() => setCount((c) => Math.min(maxSeats, c + 1))} aria-label="More guests" disabled={count >= maxSeats}>
-              +
-            </button>
-          </div>
-          {guest?.seats ? (
-            <small className="muted">
-              We have reserved {guest.seats} {guest.seats === 1 ? "seat" : "seats"} for you.
-            </small>
-          ) : null}
-        </div>
-      )}
-
-      <label className="field">
-        <span>
-          Phone number <em>(optional)</em>
-        </span>
-        <input value={phone} onChange={(e) => setPhone(e.target.value)} type="tel" autoComplete="tel" maxLength={30} placeholder="07X XXX XXXX" />
-      </label>
-
-      <label className="field">
-        <span>
-          A message for the couple <em>(optional)</em>
-        </span>
-        <textarea value={message} onChange={(e) => setMessage(e.target.value)} rows={3} maxLength={500} />
-      </label>
-
-      {error && (
-        <p className="form-error" role="alert">
-          {error}
+      <h2 className="wc-title">Kindly RSVP</h2>
+      {reserved !== null && (
+        <p className="rsvp-reserved">
+          This invitation is reserved for {reserved} {reserved === 1 ? "guest" : "guests"}.
         </p>
       )}
 
-      <button className="btn-solid" type="submit" disabled={state === "sending"}>
-        {state === "sending" ? "Sending…" : "Send my reply"}
-      </button>
-    </form>
+      <form className="rsvp" onSubmit={submit} noValidate>
+        {askName && (
+          <label className="field">
+            <span>Your name</span>
+            <input
+              value={typedName}
+              onChange={(e) => setTypedName(e.target.value)}
+              autoComplete="name"
+              maxLength={80}
+              placeholder="Full name"
+              required
+            />
+          </label>
+        )}
+
+        <AcceptDecline
+          label={MASS.title}
+          question={`Will you be joining us for the ${MASS.title}?`}
+          value={mass}
+          onChange={setMass}
+        />
+        <AcceptDecline
+          label={RECEPTION.title}
+          question={`Will you be joining us for the ${RECEPTION.title}?`}
+          value={reception}
+          onChange={setReception}
+        />
+
+        {/* How many are coming: only when the invitation is for 2 or more people. */}
+        {comingToSomething && maxSeats > 1 && (
+          <div className="field rsvp-count">
+            {reserved !== null ? (
+              <p className="rsvp-note">
+                If not everyone can make it, please let us know how many of you will be joining us.
+              </p>
+            ) : (
+              <span id="count-label">Number of guests (including you)</span>
+            )}
+            <div className="stepper" role="group" aria-label="Number of guests">
+              <button type="button" onClick={() => setCount((c) => Math.max(1, c - 1))} aria-label="Fewer guests" disabled={count <= 1}>
+                −
+              </button>
+              <output aria-live="polite">{count}</output>
+              <button type="button" onClick={() => setCount((c) => Math.min(maxSeats, c + 1))} aria-label="More guests" disabled={count >= maxSeats}>
+                +
+              </button>
+            </div>
+          </div>
+        )}
+
+        <label className="field">
+          <span>
+            A message for the couple <em>(optional)</em>
+          </span>
+          <textarea value={message} onChange={(e) => setMessage(e.target.value)} rows={3} maxLength={500} />
+        </label>
+
+        {error && (
+          <p className="form-error" role="alert">
+            {error}
+          </p>
+        )}
+
+        <button className="btn-solid" type="submit" disabled={state === "sending"}>
+          {state === "sending" ? "Sending…" : "Confirm RSVP"}
+        </button>
+      </form>
     </>
   );
 }
