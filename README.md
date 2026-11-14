@@ -61,6 +61,7 @@ Aunty Mala, 2, 0771234567
 - Guests who accept also choose **Holy Mass & Reception**, **Holy Mass only** or **Reception only**.
   "At the Holy Mass" and "At the Reception" show the head count for each, and the
   **Holy Mass** / **Reception** tabs list who is coming to each.
+- **Note** is a private note for each guest (only you see it, never the guest). Tap it in the list to write or change it.
 - **Download CSV** gives you the full list for Excel or Google Sheets.
 
 ## Run it on your computer

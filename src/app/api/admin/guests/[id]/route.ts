@@ -22,6 +22,7 @@ export async function PATCH(req: Request, { params }: Ctx) {
   const name = body.name !== undefined ? cleanText(body.name, 80) || cur.name : cur.name;
   const seats = body.seats !== undefined ? Math.min(Math.max(Math.round(Number(body.seats) || 1), 1), 50) : cur.seats;
   const phone = body.phone !== undefined ? cleanText(body.phone, 30) || null : cur.phone;
+  const note = body.note !== undefined ? cleanText(body.note, 300) || null : cur.note;
   const status = ["pending", "attending", "declined"].includes(body.status) ? body.status : cur.status;
   let count = body.attending_count !== undefined ? Math.max(Math.round(Number(body.attending_count) || 0), 0) : cur.attending_count;
   if (status !== "attending") count = 0;
@@ -32,7 +33,7 @@ export async function PATCH(req: Request, { params }: Ctx) {
   else if (!events) events = "both";
 
   const [guest] = await sql<Guest[]>`
-    UPDATE guests SET name = ${name}, seats = ${seats}, phone = ${phone}, status = ${status},
+    UPDATE guests SET name = ${name}, seats = ${seats}, phone = ${phone}, note = ${note}, status = ${status},
       attending_count = ${count}, events = ${events},
       responded_at = ${status === "pending" ? null : cur.responded_at ?? new Date().toISOString()}
     WHERE id = ${id} RETURNING *`;

@@ -15,6 +15,8 @@ export type Guest = {
   attending_count: number;
   /** Which parts of the day; null for older replies (counted as both). */
   events: Attend | null;
+  /** Private note for the couple; never shown to guests. */
+  note: string | null;
   message: string | null;
   invited: boolean;
   responded_at: string | null;
@@ -69,6 +71,7 @@ export async function db() {
           created_at      TIMESTAMPTZ NOT NULL DEFAULT now()
         )`;
       await sql`ALTER TABLE guests ADD COLUMN IF NOT EXISTS events TEXT`;
+      await sql`ALTER TABLE guests ADD COLUMN IF NOT EXISTS note TEXT`;
     })().catch((err) => {
       global.__schemaReady = undefined;
       throw err;

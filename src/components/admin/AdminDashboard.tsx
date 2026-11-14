@@ -21,6 +21,59 @@ function waNumber(phone: string | null) {
   return d;
 }
 
+/** Private note, edited in place: tap to write, Enter or tap elsewhere to save, Esc to cancel. */
+function NoteCell({ guest, onSave }: { guest: Guest; onSave: (note: string) => Promise<boolean> }) {
+  const [open, setOpen] = useState(false);
+  const [value, setValue] = useState("");
+  const [saving, setSaving] = useState(false);
+
+  async function save() {
+    if (saving) return;
+    if (value.trim() === (guest.note ?? "")) return setOpen(false);
+    setSaving(true);
+    const ok = await onSave(value.trim());
+    setSaving(false);
+    if (ok) setOpen(false);
+  }
+
+  if (!open) {
+    return (
+      <button
+        type="button"
+        className={`note-view ${guest.note ? "" : "empty"}`}
+        onClick={() => {
+          setValue(guest.note ?? "");
+          setOpen(true);
+        }}
+        title="Private note (only you can see it)"
+      >
+        {guest.note || "+ Add note"}
+      </button>
+    );
+  }
+  return (
+    <input
+      className="note-input"
+      autoFocus
+      value={value}
+      maxLength={300}
+      disabled={saving}
+      placeholder="Private note"
+      aria-label={`Private note for ${guest.name}`}
+      onChange={(e) => setValue(e.target.value)}
+      onBlur={save}
+      onKeyDown={(e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          save();
+        } else if (e.key === "Escape") {
+          setOpen(false);
+        }
+      }}
+    />
+  );
+}
+
 export default function AdminDashboard({ initialGuests, origin }: Props) {
   const [guests, setGuests] = useState<Guest[]>(initialGuests);
   const [filter, setFilter] = useState<Filter>("all");
@@ -31,6 +84,7 @@ export default function AdminDashboard({ initialGuests, origin }: Props) {
   const [newName, setNewName] = useState("");
   const [newSeats, setNewSeats] = useState(2);
   const [newPhone, setNewPhone] = useState("");
+  const [newNote, setNewNote] = useState("");
   const nameInput = useRef<HTMLInputElement>(null);
   const [busy, setBusy] = useState(false);
   const [notice, setNotice] = useState("");
@@ -63,7 +117,7 @@ export default function AdminDashboard({ initialGuests, origin }: Props) {
       if (filter === "open" && g.invited) return false;
       if ((filter === "mass" || filter === "reception") && !goesTo(g, filter)) return false;
       if ((filter === "pending" || filter === "attending" || filter === "declined") && g.status !== filter) return false;
-      if (q && !(`${g.name} ${g.phone ?? ""}`.toLowerCase().includes(q))) return false;
+      if (q && !(`${g.name} ${g.phone ?? ""} ${g.note ?? ""}`.toLowerCase().includes(q))) return false;
       return true;
     });
   }, [guests, filter, query]);
@@ -82,7 +136,7 @@ export default function AdminDashboard({ initialGuests, origin }: Props) {
     }
   }
 
-  async function postGuests(list: { name: string; seats: number; phone: string }[]) {
+  async function postGuests(list: { name: string; seats: number; phone: string; note?: string }[]) {
     setBusy(true);
     const res = await fetch("/api/admin/guests", {
       method: "POST",
@@ -107,12 +161,13 @@ export default function AdminDashboard({ initialGuests, origin }: Props) {
       nameInput.current?.focus();
       return;
     }
-    const created = await postGuests([{ name, seats: newSeats, phone: newPhone.trim() }]);
+    const created = await postGuests([{ name, seats: newSeats, phone: newPhone.trim(), note: newNote.trim() }]);
     if (created) {
       flash(`Added ${created[0].name}`);
       setNewName("");
       setNewSeats(2); // back to the usual size, so the next guest is not given the wrong seats
       setNewPhone("");
+      setNewNote("");
       nameInput.current?.focus(); // ready for the next guest
     }
   }
@@ -153,6 +208,22 @@ export default function AdminDashboard({ initialGuests, origin }: Props) {
     } else {
       flash(data.error || "Could not save");
     }
+  }
+
+  async function saveNote(g: Guest, note: string): Promise<boolean> {
+    const res = await fetch(`/api/admin/guests/${g.id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ note }),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (res.ok && data.ok) {
+      setGuests((prev) => prev.map((x) => (x.id === data.guest.id ? data.guest : x)));
+      flash("Note saved");
+      return true;
+    }
+    flash(data.error || "Could not save the note");
+    return false;
   }
 
   async function remove(g: Guest) {
@@ -261,6 +332,16 @@ export default function AdminDashboard({ initialGuests, origin }: Props) {
               autoComplete="off"
             />
           </label>
+          <label className="a-field add-note">
+            <span>Note (only you see it)</span>
+            <input
+              value={newNote}
+              onChange={(e) => setNewNote(e.target.value)}
+              placeholder="e.g. Bride's side, vegetarian"
+              maxLength={300}
+              autoComplete="off"
+            />
+          </label>
           <button className="a-btn primary add-btn" disabled={busy || !newName.trim()}>
             {busy ? "Adding…" : "Add"}
           </button>
@@ -315,7 +396,7 @@ export default function AdminDashboard({ initialGuests, origin }: Props) {
               </button>
             ))}
           </div>
-          <input className="search" type="search" placeholder="Search name or phone" value={query} onChange={(e) => setQuery(e.target.value)} aria-label="Search guests" />
+          <input className="search" type="search" placeholder="Search name, phone or note" value={query} onChange={(e) => setQuery(e.target.value)} aria-label="Search guests" />
         </div>
 
         {shown.length === 0 ? (
@@ -323,10 +404,11 @@ export default function AdminDashboard({ initialGuests, origin }: Props) {
         ) : (
           <div className="g-table" role="table">
             <div className="g-row g-headrow" role="row">
-              <span role="columnheader">Guest</span>
+              <span role="columnheader">Name</span>
               <span role="columnheader">Seats</span>
               <span role="columnheader">Reply</span>
               <span role="columnheader">Message</span>
+              <span role="columnheader">Note</span>
               <span role="columnheader" className="right">Actions</span>
             </div>
             {shown.map((g) => {
@@ -356,6 +438,10 @@ export default function AdminDashboard({ initialGuests, origin }: Props) {
                   </span>
                   <span role="cell" className="g-msg" title={g.message ?? ""}>
                     {g.message}
+                  </span>
+                  <span role="cell" className="g-note">
+                    <small className="m-label">Note </small>
+                    <NoteCell guest={g} onSave={(note) => saveNote(g, note)} />
                   </span>
                   <span role="cell" className="g-actions">
                     <button className="a-btn small" onClick={() => copy(link(g))}>Copy link</button>
@@ -395,6 +481,10 @@ export default function AdminDashboard({ initialGuests, origin }: Props) {
                 <input value={editing.phone ?? ""} onChange={(e) => setEditing({ ...editing, phone: e.target.value })} />
               </label>
             </div>
+            <label className="a-field">
+              <span>Note (only you see it)</span>
+              <input value={editing.note ?? ""} maxLength={300} onChange={(e) => setEditing({ ...editing, note: e.target.value })} />
+            </label>
             <div className="two">
               <label className="a-field">
                 <span>Reply</span>

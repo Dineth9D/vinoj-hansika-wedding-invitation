@@ -325,7 +325,7 @@
 
 @media (min-width: 860px) {
   .g-row {
-    grid-template-columns: minmax(160px, 1.3fr) 56px 130px minmax(100px, 1fr) 320px;
+    grid-template-columns: minmax(140px, 1.2fr) 48px 118px minmax(90px, 1fr) minmax(130px, 1fr) 336px;
     align-items: center;
     gap: 16px;
     padding: 12px 0;
@@ -409,6 +409,7 @@
   margin-bottom: 12px;
 }
 .add-one .add-name,
+.add-one .add-note,
 .add-one .add-btn {
   grid-column: 1 / -1;
 }
@@ -418,9 +419,10 @@
 }
 @media (min-width: 760px) {
   .add-one {
-    grid-template-columns: minmax(200px, 2fr) 100px minmax(160px, 1.3fr) auto;
+    grid-template-columns: minmax(180px, 1.6fr) 90px minmax(140px, 1fr) minmax(180px, 1.4fr) auto;
   }
   .add-one .add-name,
+  .add-one .add-note,
   .add-one .add-btn {
     grid-column: auto;
   }
@@ -431,4 +433,46 @@
 .bulk-toggle {
   margin: 16px 0 10px;
   font-size: 14px;
+}
+
+/* Private note: text that turns into a box when tapped */
+.g-note {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  min-width: 0;
+}
+.note-view {
+  flex: 1;
+  min-width: 0;
+  min-height: 32px;
+  padding: 4px 8px;
+  border: 1px dashed transparent;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  font-size: 14px;
+  text-align: left;
+  cursor: pointer;
+  overflow-wrap: anywhere;
+}
+.note-view:hover {
+  border-color: var(--line);
+  background: var(--cream);
+}
+.note-view.empty {
+  color: var(--muted);
+  opacity: 0.75;
+}
+.note-input {
+  flex: 1;
+  min-width: 0;
+  min-height: 34px;
+  padding: 4px 8px;
+  border: 1px solid var(--gold);
+  border-radius: var(--radius-sm);
+  background: #fff;
+  font-family: var(--font-sans);
+  font-size: 16px; /* 16px stops iPhones zooming in */
 }

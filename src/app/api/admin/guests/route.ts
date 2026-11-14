@@ -27,9 +27,10 @@ export async function POST(req: Request) {
     if (!name) continue;
     const seats = Math.min(Math.max(Math.round(Number(g.seats) || 1), 1), 50);
     const phone = cleanText(g.phone, 30) || null;
+    const note = cleanText(g.note, 300) || null;
     const slug = await newGuestSlug(name);
     const rows = await sql<Guest[]>`
-      INSERT INTO guests (name, slug, seats, phone) VALUES (${name}, ${slug}, ${seats}, ${phone})
+      INSERT INTO guests (name, slug, seats, phone, note) VALUES (${name}, ${slug}, ${seats}, ${phone}, ${note})
       RETURNING *`;
     created.push(rows[0]);
   }
