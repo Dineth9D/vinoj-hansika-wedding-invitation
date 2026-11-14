@@ -24,9 +24,10 @@ function inviteMessage(name: string, link: string) {
     "Please open our wedding invitation here:",
     link,
     "",
-    'To reply, scroll down to the last section, choose your answers and tap "Confirm RSVP".',
+    // *...* makes the words bold in WhatsApp
+    "To reply, scroll down to the last section, choose your answers and tap *Confirm RSVP.*",
     "",
-    `Kindly RSVP by ${rsvpBy}. We really hope you can join us! \u2764\ufe0f`,
+    `Kindly RSVP by ${rsvpBy}. We really hope you can join us! ❤️`,
     "",
     coupleNames,
   ].join("\n");
