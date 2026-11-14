@@ -839,6 +839,13 @@ textarea {
   font-size: 18px;
   color: var(--muted);
 }
+.rsvp-by {
+  margin: 4px 0 28px;
+  text-align: center;
+  font-style: italic;
+  font-size: 18px;
+  color: var(--gold-deep);
+}
 .rsvp-question {
   margin: 0 0 26px;
   padding: 0;

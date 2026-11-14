@@ -3,6 +3,7 @@
 import { useState, type ReactNode } from "react";
 import { attendPhrase, wedding, type Attend } from "@/config/wedding";
 import type { GuestInfo } from "./Invitation";
+import { DateText } from "./Ornaments";
 
 type Props = {
   guestName: string;
@@ -154,6 +155,9 @@ export default function RsvpForm({ guestName, guestSlug, guest, canReply, intro 
           This invitation is reserved for {reserved} {reserved === 1 ? "guest" : "guests"}.
         </p>
       )}
+      <p className="rsvp-by">
+        Kindly RSVP by <DateText text={wedding.rsvpBy} />
+      </p>
 
       <form className="rsvp" onSubmit={submit} noValidate>
         {askName && (

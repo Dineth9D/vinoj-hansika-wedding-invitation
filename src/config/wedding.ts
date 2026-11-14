@@ -8,6 +8,8 @@ export const wedding = {
   dateISO: "2026-12-11T15:00:00+05:30",
   dateText: "Friday, December 11th, 2026",
   dateLong: "December 11th, 2026",
+  // Shown in the reply form: "Kindly RSVP by 25th November 2026".
+  rsvpBy: "25th November 2026",
   dateShort: "11 . 12 . 2026",
   events: [
     {
