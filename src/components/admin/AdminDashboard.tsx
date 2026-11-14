@@ -25,12 +25,25 @@ function inviteMessage(name: string, link: string) {
     link,
     "",
     // *...* makes the words bold in WhatsApp
-    "To reply, scroll down to the last section, choose your answers and tap *Confirm RSVP.*",
+    "To reply, scroll down to the last section, select your RSVP option and tap *Confirm RSVP.*",
     "",
     `Kindly RSVP by ${rsvpBy}. We really hope you can join us! ❤️`,
     "",
     coupleNames,
   ].join("\n");
+}
+
+/**
+ * Opens WhatsApp with the message ready to send.
+ * Uses api.whatsapp.com instead of wa.me: wa.me links break emojis (the heart shows
+ * as "\uFFFD") in WhatsApp on computers.
+ */
+function whatsAppLink(phone: string, text: string) {
+  const params = new URLSearchParams();
+  if (phone) params.set("phone", phone);
+  params.set("text", text);
+  // URLSearchParams writes spaces as "+"; WhatsApp expects %20.
+  return `https://api.whatsapp.com/send?${params.toString().replace(/\+/g, "%20")}`;
 }
 
 /** "0771234567" -> "94771234567" for WhatsApp (Sri Lanka). */
@@ -467,7 +480,7 @@ export default function AdminDashboard({ initialGuests, origin }: Props) {
                     <button className="a-btn small" onClick={() => copy(link(g))}>Copy link</button>
                     <a
                       className="a-btn small"
-                      href={`https://wa.me/${wa}?text=${encodeURIComponent(text)}`}
+                      href={whatsAppLink(wa, text)}
                       target="_blank"
                       rel="noopener noreferrer"
                     >
