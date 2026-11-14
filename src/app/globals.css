@@ -404,7 +404,7 @@ textarea {
 }
 
 /* Short screens (small laptops, phones turned sideways): tighter spacing so the
-   "Open invitation" button stays on screen. Tall screens are not affected. */
+   "Open Invitation" button stays on screen. Tall screens are not affected. */
 @media (max-height: 760px) {
   .cover-content {
     padding: 16px;

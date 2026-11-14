@@ -21,7 +21,7 @@ export const wedding = {
       title: "Reception",
       time: "7:00 PM",
       place: "Ranowell Hotel",
-      area: "Negombo",
+      area: "Kochchikade, Negombo",
       mapUrl: "https://maps.app.goo.gl/4gND1qqd9NUKUDix8",
     },
   ],

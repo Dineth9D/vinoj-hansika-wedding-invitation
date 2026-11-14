@@ -201,7 +201,7 @@ export default function Invitation({ guestName, guestSlug, guest }: Props) {
                 {monogram[0]} <span className="diamond" aria-hidden="true">◆</span> {monogram[1]}
               </p>
               <p className="cover-dear">Dear {greetingName},</p>
-              <p className="cover-sub">you are invited to the wedding of</p>
+              <p className="cover-sub">You are invited to the wedding of</p>
               <h1 className="cover-names">
                 <span>{wedding.partner1.first}</span>
                 <span className="amp">&amp;</span>
@@ -213,7 +213,7 @@ export default function Invitation({ guestName, guestSlug, guest }: Props) {
                 {wedding.events.map((e) => `${e.place}, ${e.area}`).join("  ·  ")}
               </p>
               <button className="btn-outline" onClick={open}>
-                Open invitation
+                Open Invitation
               </button>
             </div>
           </div>
