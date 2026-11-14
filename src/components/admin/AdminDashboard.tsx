@@ -13,11 +13,11 @@ const STATUS_LABEL: Record<GuestStatus, string> = {
   declined: "Not coming",
 };
 
-/** The message the WhatsApp button sends, with the guest's name and personal link filled in. */
-function inviteMessage(name: string, link: string) {
+/** The message the WhatsApp button sends, with the guest's personal link filled in. */
+function inviteMessage(link: string) {
   const rsvpBy = wedding.rsvpBy.replace(/\s+\d{4}$/, ""); // "25th November"
   return [
-    `Dear ${name},`,
+    "Hi,",
     "",
     "We're so happy to share this special moment in our lives with you! It would mean so much to have you with us as we celebrate our big day.",
     "",
@@ -446,7 +446,7 @@ export default function AdminDashboard({ initialGuests, origin }: Props) {
             </div>
             {shown.map((g) => {
               const wa = waNumber(g.phone);
-              const text = inviteMessage(g.name, link(g));
+              const text = inviteMessage(link(g));
               return (
                 <div className="g-row" role="row" key={g.id}>
                   <span className="g-name" role="cell">
